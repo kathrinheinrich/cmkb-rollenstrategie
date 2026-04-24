@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategische Rollenentwicklung · CMKB</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0B3948;--teal-m:#5da7b2;--teal-l:#c8e6ea;
+  --gold:#9f8252;--gold-l:#f0e6d6;
+  --flora:#f7f7f5;--sand:#ede9e1;
+  --text:#111111;--grey-d:#5a5550;--grey-l:#c8c4b8;
+  --white:#ffffff;
+  --evid:#d4edda;--evidf:#1a4a1a;
+  --red:#fde8e8;--redf:#c0544a;
+  --purpf:#512da8;--purp:#ede7f6;
+  --ambf:#c45400;--amb:#fff3cd;
+  --grnf:#1e5c1e;--grn:#e6f2e6;
+  --sw:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:18px;}
+body{font-family:'DM Sans',sans-serif;background:var(--flora);color:var(--text);min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--teal);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:200;overflow-y:auto;box-shadow:4px 0 24px rgba(11,57,72,.18);}
+.sb-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.1);}
+.sb-brand h1{font-family:'DM Serif Display',serif;font-size:18px;color:var(--white);line-height:1.25;margin-bottom:4px;}
+.sb-brand .sub{font-size:12px;color:var(--teal-l);}
+.sb-logo{display:block;width:200px;max-width:100%;height:auto;margin-bottom:18px;opacity:.95;}
+.sb-prog{padding:14px 24px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-prog-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:7px;font-family:'DM Mono',monospace;}
+.sb-bar{height:4px;background:rgba(255,255,255,.1);border-radius:2px;}
+.sb-fill{height:4px;background:var(--gold);border-radius:2px;transition:width .5s;}
+.sb-nav{flex:1;padding:10px 0;}
+.sb-item{display:flex;align-items:flex-start;gap:12px;padding:13px 24px;cursor:pointer;transition:all .18s;border-left:3px solid transparent;}
+.sb-item:hover{background:rgba(255,255,255,.06);}
+.sb-item.active{background:rgba(255,255,255,.1);border-left-color:var(--gold);}
+.si-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);min-width:22px;margin-top:2px;}
+.sb-item.active .si-num{color:var(--gold);}
+.si-name{font-size:14px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:2px;}
+.sb-item.active .si-name{color:var(--white);}
+.si-sub{font-size:12px;color:rgba(255,255,255,.3);line-height:1.35;}
+.sb-item.active .si-sub{color:rgba(255,255,255,.5);}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);flex-shrink:0;margin-top:4px;}
+.sb-item.active .sb-dot,.sb-item.has-data .sb-dot{background:var(--gold);}
+.sb-foot{padding:14px 24px;border-top:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:8px;}
+.sb-btn{width:100%;background:rgba(255,255,255,.1);color:var(--white);border:none;padding:12px 16px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-align:left;}
+.sb-btn:hover{background:rgba(255,255,255,.18);}
+.sb-btn.gold{background:var(--gold);}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;height:100vh;overflow-y:auto;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* MOBILE */
+.mob-hdr{display:none;}
+@media(max-width:800px){
+  .sidebar{display:none;}.main{margin-left:0;height:auto;}
+  .mob-hdr{display:block;}
+  .mob-inner{background:var(--teal);padding:12px 16px 0;position:sticky;top:0;z-index:100;}
+  .mob-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;}
+  .mob-h1{font-family:'DM Serif Display',serif;font-size:15px;color:var(--white);}
+  .mob-bar-wrap{height:3px;background:rgba(255,255,255,.1);}
+  .mob-bar{height:3px;background:var(--gold);transition:width .5s;}
+  .mob-tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,.1);}
+  .mob-tabs::-webkit-scrollbar{display:none;}
+  .mob-tab{flex-shrink:0;padding:9px 8px;font-size:10px;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;transition:all .2s;}
+  .mob-tab .mn{display:block;font-family:'DM Mono',monospace;font-size:8px;opacity:.6;margin-bottom:2px;}
+  .mob-tab.active{color:var(--white);border-bottom-color:var(--gold);}
+  .fab-row{display:flex;position:fixed;bottom:0;left:0;right:0;padding:10px 14px 22px;background:linear-gradient(0deg,var(--flora) 60%,transparent);gap:8px;}
+  .fab{flex:1;background:var(--teal);color:var(--white);border:none;padding:13px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .fab.gold{background:var(--gold);}
+  .wiz-body{padding:40px 24px!important;}
+  .wiz-nav{padding:24px 24px 80px!important;}
+  .wiz-question{font-size:26px!important;}
+  .wiz-num-grid{grid-template-columns:1fr!important;}
+  .wiz-compare{grid-template-columns:1fr!important;}
+  .dash{padding:24px 16px 60px!important;}
+  .module-grid{grid-template-columns:1fr!important;}
+  .quick-row{flex-direction:column!important;}
+}
+@media(min-width:801px){.fab-row{display:none;}}
+
+/* ═══ DASHBOARD ═══ */
+.dash{padding:52px 48px 80px;max-width:100%;}
+.dash-hero{background:linear-gradient(135deg,var(--teal) 0%,#0d4a5e 100%);border-radius:22px;padding:48px 52px;margin-bottom:44px;position:relative;overflow:hidden;}
+.dash-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(93,167,178,.1);border-radius:50%;}
+.dash-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace;}
+.dash-title{font-family:'DM Serif Display',serif;font-size:38px;color:var(--white);line-height:1.18;margin-bottom:14px;}
+.dash-sub{font-size:18px;color:var(--teal-l);line-height:1.75;max-width:520px;}
+.dash-ctx{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.dash-ctx-val{font-size:15px;color:rgba(255,255,255,.65);font-style:italic;}
+.dash-ctx-edit{font-size:14px;color:var(--gold);cursor:pointer;text-decoration:underline;font-weight:600;}
+
+.quick-row{display:flex;gap:20px;margin-bottom:52px;flex-wrap:wrap;}
+.quick-btn{flex:1;min-width:160px;background:var(--white);border:2px solid var(--grey-l);border-radius:18px;padding:24px 22px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-align:left;box-shadow:0 2px 14px rgba(11,57,72,.07);}
+.quick-btn:hover{border-color:var(--teal-m);transform:translateY(-3px);box-shadow:0 8px 24px rgba(11,57,72,.13);}
+.quick-btn.gold-btn{background:var(--gold-l);border-color:var(--gold);}
+.qb-icon{font-size:26px;margin-bottom:12px;display:block;}
+.qb-title{font-size:16px;font-weight:700;color:var(--teal);display:block;margin-bottom:5px;}
+.qb-sub{font-size:14px;color:var(--grey-d);display:block;line-height:1.45;}
+
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px;}
+.module-tile{background:var(--white);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .2s;border:2px solid transparent;box-shadow:0 2px 16px rgba(11,57,72,.07);}
+.module-tile:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(11,57,72,.14);}
+.module-tile.has-data{border-color:var(--teal-l);}
+.mt-header{padding:22px 26px;display:flex;align-items:center;gap:14px;}
+.mt-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);}
+.mt-title{font-size:16px;font-weight:700;color:var(--white);}
+.mt-status{margin-left:auto;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+.mt-status.empty{color:rgba(255,255,255,.35);}
+.mt-status.started{color:var(--gold);}
+.mt-status.done{color:#7ddba0;}
+.mt-body{padding:28px 28px 32px;}
+.mt-question{font-size:17px;color:var(--text);line-height:1.7;margin-bottom:20px;font-weight:500;}
+.mt-entries{display:flex;flex-direction:column;gap:12px;}
+.mt-entry{font-size:15px;color:var(--grey-d);background:var(--sand);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s;}
+.mt-entry:hover{background:var(--teal-l);color:var(--teal);}
+.mt-entry::before{content:'↗';font-size:12px;flex-shrink:0;}
+
+.papier-tile{background:var(--white);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .2s;border:2px solid var(--gold-l);box-shadow:0 2px 16px rgba(11,57,72,.07);margin-bottom:36px;}
+.papier-tile:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(11,57,72,.14);}
+
+/* ═══ WIZARD ═══ */
+.wizard{min-height:100vh;display:flex;flex-direction:column;}
+.wiz-topbar{background:var(--white);border-bottom:2px solid var(--grey-l);padding:22px 72px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:10;}
+.wiz-module-label{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--grey-d);}
+.wiz-dots{display:flex;gap:9px;align-items:center;margin-left:auto;}
+.wiz-dot{width:10px;height:10px;border-radius:50%;background:var(--grey-l);cursor:pointer;transition:all .2s;}
+.wiz-dot.done{background:var(--teal-m);}
+.wiz-dot.active{background:var(--teal);width:30px;border-radius:5px;}
+.wiz-step-label{font-size:13px;color:var(--grey-d);font-family:'DM Mono',monospace;margin-left:16px;}
+
+.wiz-body{flex:1;padding:60px 72px 40px;max-width:1000px;margin:0 auto;width:100%;}
+.wiz-tag{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-m);margin-bottom:22px;}
+.wiz-question{font-family:'DM Serif Display',serif;font-size:36px;line-height:1.22;color:var(--teal);margin-bottom:18px;}
+.wiz-sub{font-size:18px;color:var(--grey-d);line-height:1.8;margin-bottom:52px;max-width:600px;}
+
+.wiz-evid{background:var(--evid);border-radius:14px;padding:22px 28px;margin-bottom:44px;font-size:16px;color:var(--evidf);font-style:italic;line-height:1.8;max-width:640px;}
+.wiz-evid .src{font-family:'DM Mono',monospace;font-size:12px;opacity:.7;font-style:normal;}
+.wiz-info{background:var(--sand);border-radius:14px;padding:22px 28px;margin-bottom:44px;font-size:16px;color:var(--grey-d);line-height:1.8;max-width:640px;border-left:4px solid var(--teal-m);}
+.wiz-info strong{color:var(--teal);}
+
+.wiz-link{display:flex;align-items:center;gap:16px;background:var(--white);border:2px solid var(--teal-l);border-radius:16px;padding:20px 24px;text-decoration:none;margin-bottom:16px;transition:all .2s;max-width:540px;}
+.wiz-link:hover{border-color:var(--teal-m);background:var(--teal-l);}
+.wiz-link-icon{font-size:24px;flex-shrink:0;}
+.wiz-link-title{font-size:16px;font-weight:700;color:var(--teal);display:block;margin-bottom:3px;}
+.wiz-link-sub{font-size:14px;color:var(--grey-d);}
+.wiz-link-arrow{margin-left:auto;font-size:20px;color:var(--teal-m);}
+
+.wiz-res{background:var(--amb);border-radius:14px;padding:22px 28px;margin-bottom:44px;border-left:4px solid var(--ambf);max-width:640px;}
+.wiz-res-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ambf);margin-bottom:14px;font-family:'DM Mono',monospace;}
+.wiz-res ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.wiz-res li{font-size:16px;display:flex;gap:10px;}
+.wiz-res li::before{content:'→';color:var(--ambf);font-weight:700;flex-shrink:0;}
+.wiz-res a{color:var(--ambf);text-decoration:none;font-weight:600;border-bottom:1px solid rgba(196,84,0,.3);}
+
+/* Inputs */
+.wiz-textarea{width:100%;padding:32px 36px;border:2px solid var(--grey-l);border-radius:18px;font-family:'DM Sans',sans-serif;font-size:18px;color:var(--text);background:var(--white);outline:none;resize:vertical;min-height:200px;line-height:1.8;transition:all .2s;box-shadow:0 2px 14px rgba(11,57,72,.06);}
+.wiz-textarea:focus{border-color:var(--teal-m);box-shadow:0 0 0 4px rgba(93,167,178,.15);}
+
+.wiz-compare{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:16px;}
+.wiz-cc{border-radius:16px;padding:26px 28px;}
+.wiz-cc.is{background:var(--sand);}
+.wiz-cc.could{background:var(--teal-l);}
+.wiz-cc-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-family:'DM Mono',monospace;}
+.wiz-cc.is .wiz-cc-label{color:var(--grey-d);}
+.wiz-cc.could .wiz-cc-label{color:var(--teal);}
+.wiz-cc textarea{min-height:220px;font-size:17px;}
+
+.wiz-num-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.wiz-nf{background:var(--white);border-radius:16px;padding:26px 28px;border:2px solid var(--grey-l);transition:all .2s;box-shadow:0 2px 10px rgba(11,57,72,.06);}
+.wiz-nf:focus-within{border-color:var(--teal-m);} .wiz-nf input:focus{border-color:var(--teal-m);box-shadow:0 0 0 3px rgba(93,167,178,.15);}
+.wiz-nf-label{font-size:17px;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.wiz-nf-sub{font-size:15px;color:#4a4540;margin-bottom:16px;line-height:1.5;}
+.wiz-nf input{width:100%;border:2px solid var(--grey-l);background:var(--white);border-radius:12px;padding:16px 20px;font-family:'DM Mono',monospace;font-size:28px;font-weight:700;color:var(--teal);outline:none;transition:border-color .2s;}
+.wiz-nf input::placeholder{color:#8a8680;font-weight:500;font-size:22px;}
+.wiz-nf-unit{font-size:14px;color:var(--teal);margin-top:10px;font-family:'DM Mono',monospace;font-weight:700;opacity:.7;}
+
+/* NAV */
+.wiz-nav{padding:44px 100px 64px;display:flex;align-items:center;gap:16px;max-width:920px;margin:0 auto;width:100%;}
+.wiz-back{background:transparent;color:var(--grey-d);border:2px solid var(--grey-l);padding:16px 32px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:600;cursor:pointer;transition:all .2s;}
+.wiz-back:hover{border-color:var(--teal-m);color:var(--teal);}
+.wiz-skip{background:transparent;color:var(--grey-d);border:none;padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:16px;cursor:pointer;text-decoration:underline;}
+.wiz-next{background:var(--teal);color:var(--white);border:none;padding:18px 48px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;margin-left:auto;}
+.wiz-next:hover{background:var(--teal-m);}
+.wiz-next.gold{background:var(--gold);}
+
+/* PAPIER */
+.papier-wrap{padding:52px 64px 80px;max-width:920px;}
+.strat-block{background:var(--white);border-radius:16px;padding:30px 36px;margin-bottom:22px;border-left:5px solid var(--teal-m);box-shadow:0 2px 14px rgba(11,57,72,.06);}
+.strat-block .sol{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--grey-d);margin-bottom:10px;font-family:'DM Mono',monospace;}
+.strat-block .soc{font-size:18px;color:var(--text);line-height:1.85;}
+.commit-box{background:var(--teal);border-radius:18px;padding:36px 40px;margin-bottom:22px;}
+.commit-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace;}
+.commit-text{font-family:'DM Serif Display',serif;font-size:24px;color:var(--white);line-height:1.55;font-style:italic;}
+
+/* SETUP */
+.setup-panel{display:none;padding:52px 64px 44px;max-width:720px;}
+.setup-panel.vis{display:block;}
+.setup-title{font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal);margin-bottom:36px;}
+.fw{margin-bottom:32px;}
+.fl{font-size:17px;font-weight:700;color:var(--teal);margin-bottom:8px;}
+.fs{font-size:16px;color:var(--grey-d);margin-bottom:12px;line-height:1.65;}
+textarea,input[type=text]{width:100%;padding:20px 24px;border:2px solid var(--grey-l);border-radius:16px;font-family:'DM Sans',sans-serif;font-size:18px;color:var(--text);background:var(--white);outline:none;resize:vertical;transition:border-color .2s;line-height:1.7;}
+textarea{min-height:120px;}
+textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
+.btn-p{width:100%;background:var(--teal);color:var(--white);border:none;padding:18px;border-radius:16px;font-size:18px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-p.gold{background:var(--gold);}
+.chip-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.chip{padding:10px 22px;border-radius:24px;font-size:16px;font-weight:500;cursor:pointer;border:2px solid var(--grey-l);background:var(--white);color:var(--grey-d);transition:all .15s;}
+.chip.active{background:var(--teal);color:var(--white);border-color:var(--teal);}
+
+/* VERSIONS */
+.vi-list{display:flex;flex-direction:column;gap:14px;margin-top:22px;}
+.vi-item{background:var(--sand);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:14px;}
+.vi-num{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--teal);}
+.vi-date{font-size:14px;color:var(--grey-d);}
+.vi-note{font-size:15px;color:var(--text);margin-top:4px;font-style:italic;}
+.vi-btns{display:flex;gap:8px;flex-shrink:0;margin-left:auto;}
+.v-btn{background:var(--teal);color:var(--white);border:none;padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.v-btn.del{background:var(--red);color:var(--redf);}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.wiz-body,.wiz-nav{animation:fadeIn .28s ease forwards;}
+
+/* ═══ ERKUNDUNGS-SYSTEM IM WIZARD ═══ */
+.erk-mindset{background:linear-gradient(135deg,var(--teal),#1a6070);border-radius:16px;padding:26px 30px;margin-bottom:36px;}
+.erk-mindset .eml{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:10px;font-family:'DM Mono',monospace;}
+.erk-mindset .emt{font-size:17px;color:var(--white);line-height:1.8;}
+.erk-mindset .emt em{color:var(--teal-l);}
+.erk-type{background:var(--white);border-radius:16px;margin-bottom:22px;overflow:hidden;border:2px solid var(--grey-l);}
+.erk-type-hdr{padding:16px 22px;display:flex;align-items:center;gap:12px;}
+.erk-type-title{font-size:16px;font-weight:700;color:var(--white);}
+.erk-type-sub{font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;}
+.erk-type-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:rgba(255,255,255,.7);}
+.erk-type-body{padding:22px 26px;}
+.erk-type-desc{font-size:16px;color:var(--text);line-height:1.75;margin-bottom:20px;}
+.erk-log-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.erk-log-item{background:var(--sand);border-radius:12px;padding:14px 18px;}
+.eli-hdr{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.eli-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--grey-d);}
+.eli-who{font-size:15px;font-weight:600;color:var(--teal);flex:1;}
+.eli-date{font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;}
+.eli-insight{font-size:15px;color:var(--text);line-height:1.65;}
+.erk-add-btn{width:100%;background:transparent;border:2px dashed var(--grey-l);border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--grey-d);cursor:pointer;transition:all .2s;}
+.erk-add-btn:hover{border-color:var(--teal-m);color:var(--teal);background:var(--teal-l);}
+.erk-acc-trigger{width:100%;background:var(--sand);border:none;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--teal);border-radius:10px;margin-bottom:4px;transition:background .2s;}
+.erk-acc-trigger:hover{background:var(--teal-l);}
+.erk-acc-body{display:none;padding:4px 0 8px;}
+.erk-acc-body.open{display:block;}
+.iq{background:var(--sand);border-radius:10px;padding:14px 16px;margin-bottom:8px;}
+.iq-phase{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--grey-d);margin-bottom:6px;font-family:'DM Mono',monospace;}
+.iq-q{font-size:15px;font-weight:600;color:var(--teal);font-style:italic;margin-bottom:5px;line-height:1.6;}
+.iq-hint{font-size:13px;color:var(--grey-d);line-height:1.55;}
+.coming-soon{background:var(--gold-l);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--grey-d);border-left:3px solid var(--gold);}
+/* MODAL */
+.erk-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.erk-modal.open{opacity:1;pointer-events:all;}
+.erk-modal-box{background:var(--white);border-radius:20px;max-width:500px;width:100%;padding:30px;box-shadow:0 24px 64px rgba(0,0,0,.3);}
+.erk-modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--teal);margin-bottom:20px;}
+.erk-modal-f label{display:block;font-size:15px;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.erk-modal-f{margin-bottom:16px;}
+.erk-modal-f input,.erk-modal-f textarea{font-size:16px;}
+.erk-modal-f textarea{min-height:100px;}
+.erk-modal-btns{display:flex;gap:10px;}
+.erk-modal-btns .btn-p{margin-top:0;}
+
+
+/* ═══ ERKUNDUNGS-DOKUMENTATION ═══ */
+.erk-counter-bar{display:flex;align-items:center;gap:16px;background:var(--sand);border-radius:14px;padding:18px 22px;margin-bottom:28px;}
+.erk-count{font-family:'DM Mono',monospace;font-size:36px;font-weight:700;color:var(--teal);}
+.erk-count-info{font-size:15px;color:var(--grey-d);line-height:1.55;}
+.erk-count-info strong{color:var(--teal);display:block;font-size:16px;}
+.erk-add-btn{margin-left:auto;background:var(--teal);color:var(--white);border:none;padding:12px 22px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.erk-add-btn:hover{background:var(--teal-m);}
+.erk-log{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.erk-entry{background:var(--white);border-radius:14px;padding:18px 22px;border:2px solid var(--grey-l);box-shadow:0 1px 8px rgba(11,57,72,.05);}
+.erk-entry-who{font-size:16px;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.erk-entry-insight{font-size:15px;color:var(--text);line-height:1.7;}
+.erk-entry-date{font-size:12px;color:var(--grey-d);margin-top:8px;font-family:'DM Mono',monospace;}
+.erk-empty{background:var(--sand);border-radius:14px;padding:24px;text-align:center;font-size:15px;color:var(--grey-d);font-style:italic;border:2px dashed var(--grey-l);}
+/* MODAL */
+.erk-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.erk-modal.open{opacity:1;pointer-events:all;}
+.erk-modal-box{background:var(--white);border-radius:20px;max-width:500px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:translateY(12px);transition:transform .25s;}
+.erk-modal.open .erk-modal-box{transform:translateY(0);}
+.erk-modal-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--teal);margin-bottom:22px;}
+.erk-modal-field{margin-bottom:18px;}
+.erk-modal-field label{display:block;font-size:14px;font-weight:700;color:var(--teal);margin-bottom:8px;}
+.erk-modal-btns{display:flex;gap:10px;margin-top:6px;}
+
+
+/* ═══ AGENTIC CTA ═══ */
+.wiz-cta {
+  background: var(--teal);
+  border-radius: 18px;
+  padding: 32px 36px;
+  margin-bottom: 44px;
+  position: relative;
+  overflow: hidden;
+}
+.wiz-cta::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: rgba(93,167,178,.12);
+  border-radius: 50%;
+}
+.wiz-cta-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-family: 'DM Mono', monospace;
+}
+.wiz-cta-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--white);
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.wiz-cta-text {
+  font-size: 17px;
+  color: rgba(255,255,255,.85);
+  line-height: 1.85;
+  margin-bottom: 26px;
+  position: relative;
+  z-index: 1;
+}
+.wiz-cta-text em {
+  color: var(--teal-l);
+  font-style: italic;
+}
+.wiz-cta-text strong {
+  color: var(--white);
+  font-weight: 700;
+}
+.wiz-cta-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.wiz-cta-btn {
+  background: rgba(255,255,255,.12);
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,.25);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.wiz-cta-btn:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.5);
+}
+.wiz-cta-btn.copied {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside class="sidebar">
+  <div class="sb-brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAABJCAYAAADbuVgMAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAABOzklEQVR42u1dd3RU1dbf59wyfTLpFQIhFCdKCyDSQgcB6TPY+wNFRRFRUGFyERUURQRF4sPyLGiuoiAqIApREASCtARBCAQCIT0zmXbbOd8fM6MRAbHgk+9lr8XKWszcufees8/v7P3b5SD4ewVRSgEhRB+9a9QDCXHcA0Yep5+qVlZ9suW4Y8SIEZogCBQAKDRJk1xCkp/vYJxOUZv+rxE5zZJM8wx6tovfD2WHj5UOX/zO5gMulwsJgkD+6e+B/04wyM93YIQQPPHANW+2yTAvjDHSdD0OkIw03agBnZMHCoJA8h0O3KReTXJJgYEjBAaz7h02vE264bN4E+7OkXqaGktbNEtMmRHa4DZdEnr9tz2ky5XDOJ2i9vj9w5a3SbfdTGSfKslU0whLGEYhsqJ0AgAosleiJhVrkktFXC4XdoqidvetQ7umJNhW6hlkDAaDikYMSFYojbIZEgEAsrISLgmrl/0bzSn1oXvG3NMmTX+b5HErFHGM0UCxIiuaohqwOcpUfCkNXJM0CaWAAAA+fyfT2irV9E6UTuWDXk3FZsphiQUGKNQFaoKX0jtddAvB5XLhCRNEbfL1gzpmxhufQ5KqEcAY8Xp8qsZfomk8CgYVrfx09UEAgKIisQkQmuSSkNzcHAYhgQwb1l5Ii+VaywGfbDJybF3QWKJR6UeWBxr0K9tCen1pWL4XGxBQVlYxohSYlinRy6KNik5RfZrBbGJOVgVe27nbd5PRYEP+ANm3/P2vD1FKkSAAaVK1Jvmni8PhYAShQJ18Z8+s5Dj2HtUbVDidka0PoJMbCpQ+fol4fTJGpyrwFwAAxcWXhuV7UQEhP9+BnU5Re2zSNbc2i8fdGiS/pDca+dM16sFZz628s3OH2DFmEyCPF94FAC03ty/TpGpNcmkAQuhvUkz8ApuO5ShQ6qcc3lXqndAqsc4YGxPVqaLOX5T33ue7KAUkiiL5XwcEVFRkp9nZ2VExcfpcQiTCAs94ZYYcP+W+aeTIkWaLgZl0urohcOBE3XshE6xAa1K1JvmnSySqMH1in36pUYahUkBSWBPPl1X4Fi1785MtKcmmJy06BF6PnAcAJDc3h4FLJJR+0QDB5cphBEEgw7qn3pESjdMCsqzo9Wb2VG3w5efeWLvjinSYmpZgs9TWK+++v+qbE/n5DgahpvyDJvnnS5HdTgEAYqNMuQZWo4hn8ala7fim3btnTL75mqykGMPoE+UN9YVFFe8CAAjCpbPRXSxAQLm5BVp2drYxPkp3H5ZkwvBmtrK+oerokWOzRozIiUuJxfdXu33S8Rp4hoatiSZVa5JLgzsQyAN3Du8dFxXVJyhpmsYS5mS1Z0ZBQWkwOZoI8dE6rsItLVlTUFidn++4ZKyDiwYILlcOgxDQ4R2ix8VEMS28GlJZljCn3f65b67aU9+xVdy0FvHWmPLKhrdeeuvjQ2K+A18KWVxN0iQR7iAlCj1s4hjQcwxTWSXveH7ZhhX33zKsY4tE28ijlb6KAz/WLKSUIodTvKT0+qIAQi70JQAA1pjYOxnQqJ5h2OoatXTLvh/yJjtyMlvHsfeeqpHqS09JT1BKm6yDJrkkxOVyYadT1CbdMNQeZTENkSQvDRKEyiuV2QAASbHsC1Yzx52q0p4S12+rzc3ty6BLLA0fX4xBQ4JAJl8/qKPZwvWSZUljGAbX1MMLBQWlwdRmtmdSrIy57JTn2Txxw3FRdDZZB01yiUgo/Tg1Xj/JYmQ5ToehukHZvvDNz9Y+fOfQ8a1To3KOldce2PLprjyXy4UvJe7gIloI4UFLMjujDARjzOLTPrnqhxp22YOTeg7KSLWMOXA6cHjT1ztfpCHEbQKDJrkUBOUKBVq3od2sJgudQBUJVMqjOq/8dHZ2NpeaZHhO0zAcKdMeKigtDWYVFyO4BIv08F8+aLmbNLsdeANPxmuKRHmOxR638qYoioHmsdFLMCVQUqHcU1Bc5RWzLs1Ba5L/RXchh0EA0D8reVSCmUukgGh9fbD06SVrPr66Z+KjGSnm5odP1r/z4luffpbvcDBOUbwkQ+h/KSA4HA6MEKIDswd2s5pxa6IRqA9Q7eDB+udn3DPwoYy0xDaHyrxvv/DamvWRctEmVWuSS0P6EgCgMTx3O0cpRZwOuYPqwptG9GyemRT12MkKf9W2koZplFJUZL900+//UkCwhysVo6PNI/S8Dgw8hxoaYFVZUGIuS4178nSFp7z4MJnqcrlwkbOpZqFJLhXrwIUFQSCTbhhqt+nUXjIB1NBAArM/O/1OR3vCq7FGhjt43PfgJ598VRHixC7d9Pu/FBDCmYbIYoJBWCMQoAwcPFH/72FXpS6xGg38waP1U1asWVOdlVWMBGiqWWiSS0VCvFhaPHuj2YBZnuPB7Q/+Z0qvmIGtMuIG7ymtXrnw9bVvT5w4kSsqqkSUujBCoSpfALikyvnRuVERMEAOzspKoA6HnYpiMQoTgPR8KHqHIyezkz26OMFk4Mrcwb3Hj/tW9Lsy8el9h6pWPP7i2uv/alfB5XLhrKxi9Mtqsr7kEotcIIfDge2NekFkZSXQoiI7/Yve43+Kq6EASHQ4cOPeGsXFCTRcT/B7xwFRCoBQDrP44Zh9sXFMO0mh6tbiuuk9WifNkEGGlUWnr5g70F7fZVKecqnP0Vn7Ify8aAsuWBmzQgQhpMZF9Y4yMVxQJbT+dJ27Xcv4R8oq/Sc3Fat3U5cLg/OvUfD8fAeeMOED7ewLpgBcLhcGAPgjCyoEhi4MsCmSdnqxJgqFUrwLVPEcJFR+voNxOETyR9K6Q2OwCc+Z87UKADB7dh/2Ir8POBwOxm63o6ziYvp3E2uRzQE5RQ3OM56/Z0PKdzgwQqL2wK3MVQYz3w4RBSpqAidbxRsdZgufuGVX7di14uaqteJmGNy7S7MrOySPirLo+2OkZjb4lTUl3zfMeWNTgYRQBKt+PV4OB8CECR9ohMzG4Y1X+6cAAkIIUadT1Eb17tKsZ9eWIxisXgMsaVbrkz98cvHncykF7WwvF9mhjUbdAJbB4PEpalwc040zGHR799eO37Bhg9sZHc2If9JViFgikUG78+Z+Wck2fTs9DnaiyMgQhT1YVdGwXRCEYoBQE4vfuZjCJdgX18JwOByMKIqaIBSoAIAfv2lkB0bn62q0ci0UTUaU8Pv3HvN963SKR//IDpLvcDBOQdCg0XiH73WxfW3tfO/scAA4HHaam/vHwPp8G4TTGbp3TnZ2XJ+uLS7TUE0Pq9Vg8/mlAOYtXwvPrdrudIr+36MTESsj1mYdazRR8EisqqcoqVmqLb3odMULC99Z+9ENQ/q17dzedr/JRG5Lio3RMxRAoUEANuGKyoof9yIE77lyclih4JfjH4lGiGJk8f2+8XA4HMxkux29XFxMxb8IfFHjXTFMhqBH7xn1cIt4/WNGg9lSVV31oVeuP56a1npq2am6BbMXrpx+FpRFlFLo27cvM7pnTFGClWsTUDTZbDbwB47VzhIWfTbX5cph/6xCNgrn8LMeGHe7zUhvtxnZrka9AaqqvMEGf9BrtFg4swlHefx09feHTk17Wyw4TClFCCF6oWAzdkCXjE6dWkz3yQ3u1RtOzC0qLvYhODvC/6H3CI9fhw7ptjF9s++ON3MTzFamA8IYqmsb3H6/Ipv1FqtRr9N5gtKbW/YUP/7R2n1ljebo/CYzdWGEBHLtuJ5Zne1x/2Jk3RhE5SpPQPt86eJP5p2m4D/XjvVngfq+20f2S00y3VldV/f5gqVr33G5QgB7EUNxCCFEKaVw3+1DO6XGmaZY9XR4TLQ1vt4bhHqPr5qoANHWqDjQmMqyuqq5T7702eLI8/72WALKygLuzlFj96aZ+bYNSkCJthi4smp205Sn3x48/8GRQnSscabVxEFVje+krOENVVX1J6JjzcV+meoOHSpbs2JNYfUZgP5Ts+G7bhjeO6u57m5FZXsSnhw5WV27cuGyr5b8ls5eqE7/IQvB5QI8RwDSo0cPy9DuKR/Ym+kHV3ulYFFZXf+nF6/eCADw7HTLqORY20OjR4+e53SKNY1R1uUChBAit9/Qo5VOp7VUJKyZTDx/rMy7UVj02dz8fAdTVCQSlyuHDfty2h9dRLdO6NejQ6vYl+OjmA5Ggw5OVgR/PH6i6vG8ZRVryqHQDwAwfcrgiZ1bJCxj2yZ3gjFjugBAlQsA/waRiQAARo8eENvjspgvWiToMlTQARmg24mKiz+IAFroXewIAP4QTxF5j0cmjhyeGq9fEmfFLXgdDyU13p2n6nwzX1iybiMAaOkA+inTxjzeJj36MUTbXBGA1B65uWtlQTi/peBy5bAICerMSaP/1SJNv4jXYUNtVUCMiuYcLVJN2VMfupZD6L0ZfwVAn2mNTJ88YkCrFMP6RAvGZiZ29I03TvtIEJ7zuVw5rFMQ1ck3De2Vmay/AyFIKKkKLlr82tr1F7owz8UVIABKKWWefMjxRIIJPxQdxXINMoGjJ2tfPnKwbsG/P/nmKADAhN5Zzbr3bLWmU1bci8IDowwuQXjmt9wHh8PBICRqEyf27WQ2orZ+lWgGPWKqGuDYrkPHF78iXLvdZOQ6VjX4xMPH3a8+s0z9FuAL37kfN+ImuhBCiMyeMv7Z1imGh7yy5JE8wS3N441XJ0bH95t55zUBhNDycz2fCwAjhMg9NwzpmxrHj6/1yB8veH3dhj8zlo0BAeXmuiAvb41xbO/Ez1skGHvWe/xK8Y+ekS++vX7j665b9MfgmCo1KK/VBrRbTSaTciYZmZXlQAAiJMYmdrLoKMdoiJa7tardP5beSClFubl9kSDA7+IkzraIpk0eND4jMWpFLIdYAioUnZA/f/3D49eVlBS6w19l5s+8u1fxKf/qg0fKYntnX/ZUvef4fITQbS5XDgPCue8fMTnnPjji6eZxuoyGhlpJowYa8EJxhJRCCMGf8e9crhzW6RTVR+8b/kCrZONCI1VBoyrsPRp4e86iVbcBgIoQwJVX2mNaJccbpz330ePzHxyR3vGKFjfW+k9NRQjmnW8hR3pXzvhXn8fatTDP5XQM7C4NjjtSeOTkiKuvGKGoioEz6uwXstByw9zGBRGi+SJp36G9KTEG5VlYBQcbsKqo/oMnTuyUKHUwCIlq7uSrp2Wkxy9AgMGqV0BD0BoA2uXmCvS3QO5c9811udAVK1+3TRjSeWWrBF1fkIO00oOCJSe9Ny54dc2HkS9OmTS2dUZ6mm3x8g9GPHRbz12tkozzp40d9r7TKZaebxFFSN4Us2mY2cCBPxgkskTwyfKq+uys5iuCirxze2F519fe27Cz8Rw0JrjP4GxQfn4+djqd2lPTHG+2SuNu9kl+eW1R6eX2qPSRqUE0wMBjnudIVmM3/GxW8tQbc27LahX9Wlq8EXaX+m8AyInPzc3VBEH4Q+RkhH9hQ63RBU2Yes0rafGmnkFFhhM1yjMvvr3+C5fLwd8mvBlpEvkkACwAAClkpzXmD+zI5XJh7CnqpmcZqA9Kcmkldb63+vtTbXOdvCAUyImQaLrz3t7DKusrTr769jffXqhP7Ag3o7jn1oFDMpMS8k2sX9MwC2XV8PWsZz8aQymVRdHJrFrVYOrcMvqjNFtdfytDg6u+9PewRXniCOKKIpEHgIJzkohFRXZ6/fUDMmxm3S2Sz69yerOuqlz+bvHrq4sbEXsw7Y7Bt6Ukxg85We1b8nzex5svFJUjC/mRu4bf3jYtaiFSJJnwDF9aIb0zZ9EnN+XnO5i6umhu0qQ8NL5v1rdBTVOzs7M7bTt6fJrOFuemGnu+90D5LgfndIry9LtHjW6TaplrZPxayfG6Ym+Z4h44oNU6q0UxlFdrNceOH5sXGvtzjgdCABQu0HoIVbYWqI9MbHZzktWWoQXqgtho0ddXej4oKChQEQJ45I5rpl12WcKC4ydrXy054Xm1S1vbRiOP0gfndMpA6PvDYVcIHA4Hzs+/IAI1TMYK6pxp48XWyca+SsAdlKgJl1YExi94dc2n+c9NNTinLQzMecAxMSGafSHO6DPcOKLLcz+Uy45WSbYJ5tS4ujDpfM575eZu0gQBITOnvxppBFgFA+UxE5Nsvbza7ZsmLPzoxQgIiCKAKIrkXBuGywU4pvY+zul0So/eN+aJlkmGm5HsVkpKgp9kGWP6tc3ASzi9DMfKuYOlp5SFlAICVKAJZwHf7EkTuZTEykdMVhVKKuorTpzyXYvQ12qu08kDgPJHwCCiw6zTKWqP3jlkVKt4602a6iEVXt3xN/bsnhvebZTGvhRCITA4U/r2BejXTyDPPDi8g45LhNP1NSsWLduw6XXXLfrbhDeDD9w4pn+LdN2y+BiSGVefoN55w5iW/37no7LfWkwuF+DcXDsdO3ZQQtvmpjdsbICqwKGqoHJs5/cNIymlCuTmolnv7TVOHn/5xmQb21kN1qsay5CU5OjaB576z7Sfkfp8i9bBCoIgz54y5paYKJZXG4ISUBNb6wssBQDIqIvGCAGZ/eA1b7ZJ1t9sYQEINfRMT89pnZsrSL+1wzkcDmbOHFG9/cbhl7dIiV6skwMK4VjupDuw7bHnPrmJ5uczm+KLkNMpKM88PCq/Xaq+7YFj9ScKCwv5wkKo/Oijvfee7T1cLsBZWQ7kdIqaUxDlrl3tSSlxeDmPFBqQCWO0JlyR1RFvoJSe/LFMXVF8yLfgPx9/cyQ0l78ejwjRabfbY0YPyrpbC8CS+Xmi+3zgHVk08dFwJ6cClTHDV3q9vpIS9DYAwD239Ozb2R6zoOxUzerp8z6eeMMN3awqjSUIUd6k11nDb4IRElRRFDV0AVH7iRMnsoKQp8x+YMystsm6AXJDbRCMVn1Jac20+UvXffrstBtNzmkLfbOmXH1XyyRmKQ6qGlHriF6vcYvmf7oJADadxZQ/S4QG6LUjeyRb9Gx7VQ6qOqOeq/HB0UOlp8e+/GbBbkpdODcXIEJmnpXsdDiww26nSBAIwGJpyq1Du2YkcI+rAa+qYCMXE8+PM+j043x+6VBZlfR+/obDz+/Zs6f+DXT2Mc/NdaHCvCeU21zjeKoqKmDMG0wkjVLKCKIo/14COtzfQbv3lhHtzEbuKtZut/NRcbonGSwTDZmxp8GzuLSgNFjUtwXb+EfDqH3mjdCyZdlsv36CcvdNQwbGRhu71gcC4PXrV4YA5c3gtInXjM1qYf1Qjz2gBYOaHowBRZbU0MsJVBDOvQv0hRyMkKA+NW3MywlWQ1LA75GBNfPHj7vvFzdscIuik5n+xnZu2q2914HszqytUb0x0bFmt9/z9WsrPyvNz3fxolisnY+zmDgxmxMEUZ40aVSLlGj9JFn2aQxv4Gs8/vKtB498SF0ujCYJyvwZ176SmcLf3OCuk3zYzxh1Vj4xMcAjBEE4Tz5HqFW3nSIEbLs0w3+setkYDIAqS0T94UjFJEopiLlOximI8gsPj35P4dlBP56o22ngzGYA8FOXC+eVlzOnkpN/CrFSACSG+1UCiDB6wIDYqzpGT+B1MDlGT2MQkmmlm+4BU9S0Y2XHGpYsK9kDcFiKKPrZwCBkwYiqxZISO2lk1jdEr292OhBcQilFAAjOtlBDv4XIvbcN7mAxGTtIqkflDCbOXRFY89aaNccHZmdE2VsmvF7rC5SvXn/iDpfLhd3lO3qb9NjiblBrT52sOBnmH1QAgFn3X3ul2wvHXlz+XsW5lDr0nHnK7c5+fVLieJckeWTWaNSdqCXbnnxp3fPhTcg38/5RkxKj9Utrq+srbDZLXFDicK3H+7HL5cIxtbXc/YsXy+cGA8C5WcUIIUSEaSMeN+upTiM6OF6n7P/2+yPXrFq359iyidkcQoJyrjnPzc1h5ggFaoRIvfe6q9qlNUscZ+RNkw1YVQmnMafrvO+zfFTe/pLyqpfe2FAMAFpjbuTsQCgod4weeBlPmGQOc6xVr0S3bxX31gszx8+orpVfXb56x6vl5eX+CwGFyAZw3w0j7Ze3MRXWeehhdlC3ZiNizaYsWfXRBokJnjhBPjyPSUkbK0Nubi5FCCmP3jdgVMu4aNHIaVylR60/dLTmu/nOrdqMid0GN0+L+9DjrthHdEwbizlB5631fvem+Nlpeg7FjIDBRpeL6ScI6hPTRs9ulqgfF/BKMm/S86WVnm3Pv7ZuNUIIpju3czOEXl/IJJBRXhV81d7K+iCAF7ig8i0AQHzRJiKKZy9BbbSolMnj+mVdnmJcZdSTREWist7AMg0NnrcLCoq9qECAmVP6zUiLp5PKjlcdNVkt6TxDcNAn1Wzfvt0TYrXOYeEAYFF0IKdT0J6ddtPrzWK1Tr5gjWQ0x+jKTvjfW/7ed3v/vUJknIIoL5w56o2E6NgJ67eU9Lzi8tgXeD3jBgAqFhfjSeLPllp+voNBTlEDp6jdOKh3y46dYh7m9Po7dIhyRh6AqrKCTRznDgZeeeKZvC8bL6RzJGwhl8vFCIKgjh02LL1/l6j1eg5lFu460H3pRzvd+uTc80Q2NmEAIHEWZqTZhBnFhzS/TGidR1oGANCnZ3puSlR0i2/21l5TUFhYXVBYCHOnjRhi0WOocqNKVRdT6xRF7bYxPTtktYlbmpRovKq8VnsfAK51nYXDCIGHqI4e0KtNp9ZJH5iZIJZVHdUUHlVU1+WGoyvBh2/pfke7FnGvFBedXBYfbRqoM6iJnlriLjzoLv5qqUAoBfn+xWdfLBG+SgARhGmjXmiWaLgbKxKpC7I1q74uGvLttwdPuVw57CShQDlXWBUhUQMoUAEAzb2v5wirJWGawRKTY2K8QGU/qETTJNVED5fJC/LeenvnGW6ldiYYhCxlFyAkKBNvuWpA98viPpSCyg/FJwJbYm3Gm408tsRYICs5zvjCAzdedevGrSWDP/9mdzVC5waFCBdxTY49s7Pd+oWkKDUlxw/3w4kx5ut0rEZZrEd+yXP4tZWfHaf0/CZ26MEFghDC8+8f83S79MSPg8GAmxKGKhTv/OiLrZUTR/drlZ6evq621vP8sUqyRG+26lSQwC0HtwEA5J77aCtE8/NxP0FQn54+6tHMFIsgK7KKEcVAMHgl5XUAgM6dk4zTZ3f+JMrK9Nq8+/jQ5DibRc9hJFEMgYBWDmfYhWf4nywCoE6nqD02caijsz3pe5uOtPLLksYjzLs9knqsLnSfu669qv8VLdOePlUmr6rwyBuMeowxsCApge9CyT457Nl3MsC51AVOp6jNf3R8Xnoqvdkb8KoITJzkJ7Teo70esryc/MLHnO+0SIm/Zdfx07e8sWrjdxYeung8/pB75vjFbgxOp6iNueqqhHmPXLO0a++kEp7XjXfXe6cXl5TeoyHQEKaM20s0j2zYmO9wMBMnTuRCuRUF6plzGmLRgQqCoD5y04BRw3pE79HxTPyWwuP9l360c0ekXdi595hQIxyDgRtMNRl0jJGva/DvXZj3WcHd1w/ISE2Jm/LjycrPnn/94zWUUtS+/SCTmWfHEEIhoOoPFBYWKvf/6+qru3ZO+qpZNHMVUmTwe+r3npNLEkWtqz09qdeVKWvio0m8KkmqnkWs2+0pKd50cBNCArn/1gG3d+7U9t+nyqvF8gb9s1E23ArJGBiWP/7VV99VoJ+t3V9ZOxEw6NWrV/xzD45c3SrJcD9IAYljDbiuwf/Gt98ePLVs2USuEVAhl8uFXa4cFhCAKIqa0ylqI0e2TZnzwNWzXnrMUdYytdVqVse1Ka8KzDlyquZdxOoIi3VMg8dXsW3P5gMhfiqU4hz+XfrrtQYEIYHMvWfoAzmXt90QlODozsKDQ10vfnbv1n3H7fuO+PqW1waOK7JfaZlk7HiFPf1mhIC6XDnMudyhCR+IWnpUum1gn6yPMaMm7fqhdlzeisJqrDNwWRr4EWYxUKrbTSkFUczH50IVSkMPfuPgTpmLZ4zZ1CYzbkbZieDCI9X+pwxRJggodesAAK5oH7uGyOj7x1/4cFpcAh7OIAlkhQLC3LcAAFln6VPvcrkwpRSQ06nNvXvYghYJ0U+erq5UENEYhICt8zFQUa58cEWvXtF3Dbvqk+bxhoFFJzyTxVU7dmua3IxqhBLCgKRQEslUbLxAQyE5oIJQoHa3d495etqovK6XJ+f7ZLKrvCaw2coihuV5qJOgYPlbG37IyXGY27eJ/bfmVbyvr6ucEhur74I1FWSKwO/H687vlwFBSKAvzprwWmKc/l+nK8slFhiGZTD2SnLtgtfWrB81uEuzBY+M+yIj1XR9cYnnyQVLPv3P1NuG9rKadUiV1GMRpjkCwJRSmDWl/8ODhjQ/buT1jsqauslT5uanzX7x00WtmmVGG3mGoRhRr5dou3YW+52iqCXn5Wm/VrKQ8ouiqFEKunkPjlnQpXPqx0pAPrV5R1Xn1z/eXBD5/JybAgAWBIGMHjAglmf49kRiKOE1qPH63wIA0qK5QWApTw+U1N8X2rkRHdGHc9iiLGl+RYMGn++DxycPH9+hddRnVl6LkSWs1vj8wV2lJ99qDDaRRSGKota9Q1rqdWO6fBVvwa3rfX6JYBZzPAGJD3y69vBhafbkoXdfeUXc8qraQPHMZ1bd3LNbqhFjBYCyoBGWAgAQ+gv3DjkcDiY/PwR8TqeoPXL7wOHXDkj+vnmy/ho5EFQZQHyVn2plVYE3HA4Hs2HDZuRy5bCRXomCIBBBKFCBArjuGzH4uYccq/p2uKLUbNNNl2TY9MOP8uDJrvzms59/18WwpniEKAaGgEFv2b93b4UPQmTkr+bI4XAwoXNKCtQh2e2Sn5s+fvVll8UvrK71fvj8W/U5yz/ZX/G66xb9Ox9tL+N1UlxSrKk5URCRNYWyOiyfn5fLpZQC/+C97T9IitNnbd9dc3vee19853LlsKwclNPBQCjoEEJAdAghumzZRBz2Z5DL5UKR9FenKGqAAGY/MPKelFjDYo6o2rYfjvxr/ktf/fu5aaOWy0oQHSjRVgoPDpthsbLtvis42oFSihY8PjoNaQCKqoJX8tYBAIhntzpUQRC4px8ZsrRd8+Q7duzyLNKIr13yZbbBASlIgVJi0ZOJt/ZLviEx2Xr5zt1lLz+Zt24ppYCen6n/gSDmahYRajayGY8KAtm5bCKT6+qL8RyBhMzeAgIAnOueIbckxRvnJ1lMMSUnapY/+OzWB55/rP9WTCUIUgbq/L43AID26Ricl5oQ37Jwe8nk4uItx/XjxqciqkG9XyPHKpWdZ2H90bKJE9lJeXlKryuuiB57TaaYGmsasHn70UdtUQZHvM3QSdL8ABTBA7cNm9o8jXswIyUqbd+Bmlcff3HV4y6XC5Pq7dlGPQNWk2kvBUBF0BdfLgjy3c4BXbPsicsYDnVqaKif8/C8T+cDgJ/m5zO5RS+xqha0UoooUEAMAxDN81q+w8GIIAKIoXx80enA4PiZBLvvpqE5bVpYXk2OsrQ+fNq7dMb8TQ8DVHkjbcbP538WOxwIRBFiEqCNUcdYGExQdYPiLStzvzH5jpzMxJiYG8tP1i9+feXmkps3DWABAEUb8MM6RoN6dyDIUuXqzFZpN3rqq+sCCksT4wwxp2trNq5atfMEDXfd+pnjKVAGdO3aZszQVuuMBpy4e2/ZPZmZic8Bh7CqcoAlnDLrniHPZ7WJmVpfjyp2bS91AEBw65aDwezLrapBTxCA1iy9Q5QNIXf9sonZ3MTkERoSBCKGMwVvv2FI23Yt9E9kxFgdpyrrvWWK5rfo9HqTjkflXuXLZe98VRx+9Z/GJT0d9NeOGNDdYNSP0TH6ITzWLESVt/hrsdP10s61AGWBcOYUzJ7dh8UNWipSFcAMBkVRzAAA8XY7inBQLhcggBycm7tJQwhpCCF4bPLwG1KSLK+YWN68u6Ry+hPPr10QAYxbc9+Qlgj7uQSrcY4eAQQQZj1+opyqrP0knMJPfg0GlCKE2GcfcXyYksIN2L2/YspL733xZiQKxvKMrpJDtJkqKUivYwZ06NDBNmlSXn3YN6bhsAwBAJh196Br4mPM8+OiYy47WeVes2XPsQc+Xlt4hLpc+AVyoEVVnVbj89YkNU+yP11W6l649JPv9i5FCBY8PFJjgAWNyuDzyagxCRdCaDtFSFAH9W7f8pqc9q+nJvI5B45Wz3lq+SrXvAcdCxhGNwRRd9DMMuxVlyc8zfMYCosqls/JW3fPsokTOYTylKm3el7X6WwPJJg0FG1h7rjl+qtXdZmUtyVyn0kThrRo2cww1qRnpiTERKVX1TUUf1d8+qZ5yzd8Nml491QdaK0powN3vVRfUnHk44fvHJfVJo2/50hp7eY5/ylYmpNzix5Ur8JyCAiVj+39ek95o7AVync48IQPPtAm5eUpd43r0qlT+5YrTCZj272Ha25b+O7GNxY8NqEr4uWOmleTTBxruzLL/DzHGmBfUUXerCWfTtq5bCLXZZKgPDN91JVEU6H0ZLUaCv8JSu604TObxcc85fVJO3846r9syZuf/hDxd/M2bMBCXoEyZ+rYShplQkirk6JtBn3G5S06OfPETyMZbSFSUNRABLj3upx2zVpahJQYm7PBHSj5es/R4S++tfGziPXgPE/68Zkx+uZpthZ6HhCLKQ245S/f+nhHzbwZI5ZrAU3eVFj7RH6+g+nXT1Cn3tP/2oQ482WS36fpWMy0b5N044lKz2e7DgRe6NHRtFJjfeB1R+2lACivvJzJdziQI6QXyi1XZ/fs3j3pE1ZHDLv2ugcuWVG946Xc5EUsEyD+oEzirXhcZvMkOF3TcPrYMevg19duLl62bCI3aVLej5nNR3+QGK2/1gyK7bYhQ5/O3fP+fZPyCpVJUAhpAIabJo7oERejuyvGrB+PEIYfT3qePlUTCHZpFy/U13pki5Fnfb6Kje8suC7u0LGaOI/EZ1lNxlYYK104TDMRgKogudDn9z0488W1XwFAsDEfIYoAk+2VqJ9QoD71yKi9wOsvUwIBjWFodr9+2a36CcKRSJKfIAAFKCCCgGDq7X36NU+Mm5cUF9Otsq7h629/OHZv3rtf76MuFwZBoLl2O0UI0UnX9e5ksUp2v8QrOrOBqz/hy3/z/YJjZyY1hSJdH2iCgLgnH7r6w8w004g9BxsefHLp+sUul4sVwsQuWxfwv52SGPU48XnUaBNru35o6/fbt4t/4K33NxwCADrluj6t0pKihhuNxklWq65djde99/sDpcOfXb7hMwAAmp/PIKeTLpg5pkMgqBRfldVsviwrni9We+dsdOWw/YQCVVLQIcLK2XqGx1HR8UaEgDrsduYDBFok1PTY3VdPaJZs/TfHSsYt+ytvfH7Z+ncodeFJN30rWoxoaoItRk80CvUB0lB+3D9LeGnNovBOoobDl/um3HH1HZBmW5wcp4/pb9Zt7vzo6H2yCpKOY2OMOiaDZTio96vbi0rcM+cs+TAfADTqcuE7dq9vx2NVhzhEpYD8uSgWexc/1nqZpprowVPSpPCiUoZ3H1mKWVMyAlbbW1Hhp5QiUXRip1PUwmwydt095KGWzWzzg5q+8rs9FX0Xv7W2IN/hYL6r9r5rM1vHWAycHiiGOq+/tqwy8NTclz99jlIXBshV7Ys28waedg5KCPTxzb9MT4+yTb9l4HtRNuOQ0+WBWdOf/WBuY/LJ6RQ1lwsoAoDvj9W8bzHpcpPNOrNCZLlVkm7x1DuGaQihLwGAXNv/8rjLOrToZTUZbrEYdNcElYD/SHn1g7nPrX0ZAKSwAv3u7EvJ23AZl2ADSWFRfSDwys2j+7VKijeOOl5SO2/t5s1VjzzhYjMzM3VpUVFPAtUoZkDjeRN/8JR/8ePPiFMeun3EOAuPzbKMoc7rqUQANH9gXSiejwAen3T1/RktEl4IKHVlmwsPDHpT3FfoyslhK71BMbZZzHU6SWYUQuDHcv/Gwu9P3PX+5zsOuVw57KRJearL5cJr1on3jOIuj2kWrxvcPoW7a+njY8f5VDiCOcRxFNutJqPBG5A9VfXeJT/s8yx5bd3Gg3ffNjTHH6Tltih9gl/x4cTolLn1XjrNYja4GQ65Kaa7ZEX7POALfjNv+frDZ5KSIAI4G+ckhDgCqKmjS+NjyLUGTFGUgeKruzZ/p1vrjH8hJBYDAL3zmm7pWa1T+rF6frI1Sp/t9kklB45WOucsWS3+lIUaXrgu2MQAAEmOt/Q08SbQFD/yeBjpx+OBORQA5TZqXByJIAGA/tmZYz5smWwb9uOR+im5L360eKPLxfYL/yYAADt38SrXnPvHRiXH6O+zsBTapPKD46xccddWY+opYJbj9WbQZCJT9fO9x6T7FyxdtT6SL+90Cgg5nVp29kTObPAG6ht87ZOa2aKOnGx4rKC0oH5v7VAdAKhVDeS1RMV4g43XiA3RqZTCl05BkAEAHrirf++WNuuTzWOjep90B77ZUnR40lvvf38gxIoLWt7b8N3EGwf1SIiNuYFh4PSRE3X5b4vrD4ebudKwH0fDoPD6dcP7bM7KTHUmxOC2qoYy9To+oMnSsdNuz8KDZf71b328+VAk+2b2eAePBEEWpl6n8joNZAWhU/X+f8+4Y+iw9OSYnjuP1D217J21xfZuU3QAILl93BtBYuxh0vkzpt468DqE0LthE5J5dFKfkSnRCU/Fx1nbldVJ4ldbd0/99Ks9J12uHNYhiJoT4IP7bhg0xBZtnIAwV7xzX/0Hn23cWBoax2IkiojcdkP/TKPB0MJdL3mKi460fvSuoSsZWU7b933l0GfeWrcuEvcWGk2gIAAJv3tZqqHPLXxmyivRZi4+JQa3jLXGfr7k8VEeRQXEcEYLy2EIksC+8jr35NeXF71bUlfi/olx/oMZmBizqRyLoaZeq5u3+Mv186cNy9e8RPpuT9kzYdZfnXnv6BlJVlMGkXySouN1B0rcTz79yqePI4QgqFA3IXowYk1Li9ZfBQDgdDaws+4aPjAmlnkiMTaqa1lFYOXqdbV3bd69rypi2qYfS7/9trFXFiBNzVY0Zs3cl8TVjZJs1LD1BgBQu21b8ZAZE4c6kqKMg3Q8as6oSrxObzjpafBvrqz2f/7EKzVfA2wLhK538IIgFtzh7O7o27X5N6eqyI5jJ6sfTm+WXLbu893VBXtK688opIDZs/tEUvLPmpgkiqIWfq6vZ903anqzaMPTUSbKtk1hr3Tb0N7Fj42r1wAYluMsiBBQCd108HRg7FMLxdUAoIWyfXNR43nvCwACACQk2zADBDBjZqs9vhVvrlz/w/B8ByM4BS3Mo2FBENScnNS0Cf16rLCZDb2+/+Hk5CdfXr/U5cr5BRgAALAIAZm9aOWUW53938hMibkG0dpss5HnZV8QOF6/o9zTsG3tgfJtO77cURNZSOPHOxiEBC1UJgxgM2xtJgfbxbRsFmssD9RVfr2n/OVQptVauTY0EF/NneacZ0owzLA3l4c/P2PM4QChRXqG6RIdZUrx+gNl+45W3Tb75c/eaJzVJwiRhKgvvgOA785SyQeNE3YcDgezQhR/DGdVnrMoJLyrk6ywP6iqGuZYBrwBpebz72tLHhhl31RR4Tm1fuvOudTlwrm1ghKyRja9/uxjWq+MOMPNXdrEvbNg2qiHKSEVegPfJSrKGFPnk/dsP1A58rnlaz75mVwUVeHnYpT1ALD+FyFEJGgh8APULDq6p0mHWLccIIOuSl0pB+Qf131z7LKVG78vdblcLELCWUuXBUGIgMLKa/pfuaVHdqtRVGnIMRg5W1CWDBjr90v1yt4qt7px8X8+PnJGiI38maIjSkDT8RwoSnBTzjWDM1JTo8ZVlNQv/XTzvjqM98O9t4xolxbPPYyQH4A36Yp/rJ25YPln8za6XOwmACKK4teJsa3XZKbrRzRvZhj90qzrKykEOYPZbPMHpOLvD5WNevaVjasbjycAQGlpaTB3YemyxumVs2fDmYluNLxm6by8teJZqCv4ZcqxnQJsIpQCEu5NbmPmbOBvUP+97J1PN52RsISziotpkV2kgkDJhaR4N5qjBROG9fn0cnvacKp4upsNrFkJBBm9Xr+zyucv3HGofPNnn+043VjXEUK/mvfIA/n9fi42Sk+CEsUer3fFsokTufJvjmNKXTQc1idT7xg2tF1z23sEKaavdx4e9cp7366OWO+/qmWgFCBseu8CgF3nG7BweuZPiT7FxaEahoz01FiOoUaG0aC+Fr9dULCnXhQdjBNEDQSBhhfDzMfvG1MYY1HHAcu051R0GWXIFyUlFavn5q1bDQDq2ZAQIaCRGvvQMPQl5/JxI0gMABhgE+Tm9iWi2Lh5Sl+CECIRYiiiHcfLjgXaJqVD0BesHH5l0r0Jsfr0HYVV12/bVhYQHyxmBCdoAggIIVCnPwm35N47/lujgY7hjVy6JgfSZA3eLzrkyZ+/fNUmgNB45oIAgvDzQkMInfEeBT/tJllZCRQAqJnHg4AoYDWbbKcryTevvfrVqH1ud12EcL1Ahav45Kvv8gAg71yAmJvbl4m4HH+2sIlhtMMIAdUod3REW+NzwQCmhSWn50eyUOPjrH0Trbylss7vKzntfnzB8s9eCLuZkXvLs4qLRz9079DrmsVFX2HQU2N1rcd/si6w+ukln2+JWKOABIp+CVwoFFbrC+HeC+Qc+RKU0lB5dHxRJarKSqAORz6JHCycVZxAG5v3LlcORgjoMw+h3h5/AFXU+r+M5Bc0cqn+UE1Oozk68P5ncOB81aqisxg5xXODdeQ06aMnqgrjjM0xx6haIEBiJr0datJy/+K1cIdjcGZWhlFISrBeX11Pv9309cE7VhYU/pCf72D6OUX1N8qfw8iXVfwTEsUXVaKq4gTqEEWCztHcQRRFbc6MW7KbW+SdiiLJW4vq2r8mbjwUKXs9W770+RJC4O8VBADUbrebJ49tU2rhglHYEMucrpHWT5//wZCzPdP5EpEQQvD++PG/t8wXuVwuJAgCt3Dm2MPN4wxpxyp9X06b//EoQOBzjD9/+O9cWXJhkIFfFsn8dZ2kIoktj90/vG+71KiNkq/eZ42KM+0/4p4756VVsyJElWNgdlTLFNOQeo9amPfxt0caRxB+u64Z4P3xf2sH45/Kkl94dNR+AsT64FOftAjvaH9pqfhZ11pWAi0qEumF9mSMrKn5j4z+d6s06x3VVZJUU1O9UlaCalxcUobBqO8pKVqgweN7eMbCT5Y0nreLMnr5YbJk0ZzbO4nP36A+M+2an3bIc30/Pz8UX6WUhuK5jv9u37lwPBkev3fE9Lfm30wXPnb9wdGjh7YKPd/Z38PlymEpdWFKAVFK0UZXDhtOLvlDFZAAAA/fNfyW159y0HfnXUdn3jP0WgAAl8POwz9XkMsFGBwOZs7UsV++u+BWOvehcR8BQGQs0Ln05VzJYhtdLnajK4d1/Tyef7deoFA4MV3/Uu744Pzpw95oPEf/xDkIpZYDzLxn6OxFs0buWThrLHn+sdHSC7NGbn1q6ogpdntaTGSzirj4F00ii2DBjDuzV770L+q6d/C9//ABPK/cOG7QlVdccUX0zzUIF1cigHPPnRPavOy61vPOU6PI0tnj6F3XDugUyYL7hw8ZAgCwx8ebrx87qOfZLE8AQK6cHPaiK+NfqM8P3Dwka/nT19PcB4bddCnoM2003m17jLQAZBvPtuldEEn8Zx4k3LQSdu0rL9lf4hM9AVgbKlradMmdt0ApoLc//OK7ffv21f2Btmt/aBKzsoqR3W43t4xTVkcbNAuhLASJUrb7mO+HSPTknz5sAADFVVXed1d+sSVcAHVm/jwVCgrUS6E1eThLHHRmPpNSAtXV7r1nZk3+Q1GZhghqBAe/Xd0AUOinNJRSTQFQ0/knf26H+FvM1MiuM/e+ke+Izznpa7kjgysWXE/nPTx89U9E2qUjyOG49FqOn2tOnp7ufPzl2eOC3bunGc5i8fzj5+LPPO9fpXToUuxBfxaL56J2JG6seJFmKa2bWa+v9UgaYTgGQRCkIN4ctrIuJUCgf9fYXUzpG/6rp3IzX0Cr37atLIAuPY2mf2Ye/iqlo2GzpOk0pgvgDebMKVBvH9KvbdvmhsUnPN6Tnga52sAhxuPDtLzG8zXAz2GlJvn7pCocmfFLcheDQb8LAOD990NFTP8rY4Cb1ODvNeeysooRpYDtHeP/wyPGWFpe96bNajYzFJAviMt2H5H2NOZnmuTvF5PVAP6gIgGcva9hEyA0yV8i+eEuR4/fM/qRti0N3Q4e986Ptpj1VjMyATBUkrWvt23bFgj7sk0Wwt/uM4b+sByGeo9H+l8cgiZA+BtdBadT1G519u6c2UwnHK/wHl7xRdWSFDN3oywFqQIs8ga01QA/ZS42yX9rUWAWGMCVTYDQJBfVVQAA3t485lWL3sAdOea77doRKT1sUcYEomGo80kNR46f+AoglCLbNGT/xckCRAloliZAaJKLZB3kME6nqE2/e/DUti1tnY+U1n3w/OtrN1uN5FFVlSnPGyCg4HUr1hRWRzrxNI3af0+kgMLYLIaovyM5rQkQ/gddhdzcTdpNEwc2vywlemZtjeTfdcR3/7SJfa+MNxo7EJloKmio3hNYAQDof43E+kdJODMpGAjWsRxzGUJAL8UkuyZA+AdLVnExQgjRLJNxUUK0LupEVcPc91ZvOBUTpZ9lZAkwSI+rG6SKoj2HvkAANHzST5P8FyQ+dEQfsLyuINpianejo1tLgJ9TmpsAoUn+3IYTrix78NZrBrVMsY4+fMp9+L3TxufuvnZo+xiL6WpJDqiMnsHeIH5v9bcHG95vchf+q1JVHKo+LK8LbjfpOOjUssWTCCGa73D8z4wB26QGF02Q3W6nADls8zhuHvAqlHv9DxeLq+QbH7pmVoyex4ofaXVBn1p6svJVAICiIpH+BsKEdqpfl68icDgwiOJP/S8v5nv9jff6vQ4aBkfxr10uu51CuLvW+a52hnM/ik5UbklPNFQ2j9ddN+dBx4/I6XRdrNOW/3FK27RuLxZ3EEpPnnn3sBuvbBv/1sHTdd8+Mm91z/tvHHSlva11q4ESlTMYuJKKhs8eW/DJ8P9SP4j/OZD+LVCIzMOs+8Y+eHkL03MYUfjhtPLh3qNkQvjcSfgdVlxkfV0yQNJkIVwkxcvNLdDWLe9uSDDrXH7VD+XVdBYAQEqS7gWrjkWBoAKSHKSVtfXzQ5v+byhxWpohOqnlvSyhvqpdm/MAQA27fDQtLU3vTc74F4uVoK2m6s3Dhw9LAH/oROXfXEwJV3TJUHluBNJga83urTsuwn3++LN17X2DAtBaYhBREMKcRnwI0XKiwo+Bws07LsSiCTWudWFBEF6Yfe/IZq3iuVuMDJ9WWdnuj2yel5xF0cQhXBzrgEEIaO+BKSObp0VnllW5v3nh35989cjdI29OjTd39wcl2WjguYY62LDotW++ptSFf6srUrSP5zVkuDfIGe75ad5ycjAA0IaEto8RRr9Q1SBw+PBhCcIHlf7FhAgGAEA6Q1eqj1pEGP6Gxv//35XQqwYZ3XiJNdzLUjzAAOwQFrMjMejmYF4v2jr3eikps2P8hVjGoVPJgMxZsnrqkvcP2Kc9vaJ3QYGg/k7rABI795iekN3n2ezsbO5SscibAOGiSKh+Pj5JnqyBCu5abs6IEW3iUuIMS0ClhMEU+4IUTtYEZwEAcjqLf1NRMOaIisCtAXh+Uq6CAjU6u3tPTcfchVTl5fqdW98CoCjsL2NwOJif/v1aGc8sk0UAkX6UZ/msshIBANJUeRfj9z5oCPryw3wGafR7OHwvfIH3+vX/nf36C7LMCYAXUeTm6t3X/Xvrl70MR2uG8nX1w7Cmfqzx5ltVk3ViGLHRL9aAw8Gc+TyUhro47SguPg2hI9YRgAs1ejb0y/H99ftILNvZp2O6V1dXM43G4HzlyWcZpzOe8/xl5viMzxE00QL/besg1MfgLufwy197ykEXPTrqIADAszPHrX1/gYMuzx0tvffcjfTJB8e+FvFZL0TbExMTTYZugwpNVw7aCumgB6DIlJGREHVl/62m7v2/sdrtMb+9C/1KaSMPjc/zQheyOPGFc1Rn/T18AYvjN8fI3H3gCmv3wUeTs3PiwqsaAQDw7Xu10V81zB11Zf+Pf/v3z/J8vy/s+NP11u79PzT0GLD+InF96Ix7nvEd+oeAoIlD+MsldCJyUiK+JtbMw6lyd40wbcSbGdGmIQ1et8IaMFdZE6zbXy4/HD5q/YKZegYRGRMMAOkAgCgXM2A+pWwnpsHdx1NcXAvgYABEzQ52vuLyqAzFwLQgBCwASrlR8v1YuV+oiPxWZmamjhASpdfr64sFQY6Pt5u55KjWihpskDxSrYFn2YqSMdUgCCQ6IyOKt6S2ldVAeaxUX+nX6RIkVa2vOXiwIayMBADA1unK9pxOn6IG/Cfq9uwoipjXiYntTdRIzJU3j6sCQSBpaWmGYFKzdkTyVtXu23cSAEgOALurc88umCAzrwSOVhUVHvlDK4cA4oBwkJPDwtVXM5CdTSxen1cyGKoIUKXRAiIAACntu7YJsPqWSKX1A/Zu3imCoAEAArudiyMkNoXnPXtF0QcAkNi1Z5YaCGo1+wsPWe12G9bHZRENklVOa+AZdNJw/Mjh8FHsOOqK5lGUIhumXHK8vXtmQK52EyWa4UAOcgbJUI1xDRQX/+IMxuTsZCM0WIzlhw7V2u121qMo8WU//ngKAKixY7cOmDG0YSip4YM/bK8qrvI2AgECABDXvmsbZDAmaP7Asdp9qCw+Pt7MRkfryw8dqm4ChP+SRAqTrGauhxygkBRnuYoz0qu8DT6COYwkpEMnKmomrVjxRbWqOhlRhAuKLFSYTGwUoUTFSg2UlgajO/WYQBk8EiuBKXXF27aDw8FEzPfy7JhnNIYfg4CeZlmiaKBPk1lLIDbb9rqBO7a4bFtZoNbS/CFg8W2a+/igmI59equ8fraEIRkpfCHhtKOaDieYvEtvNTQfMCrIMI8QShMYHn1aBXQZMkYtBSI9BXDwPwBAbJdf2V41WV4goCVSQt2q3hpv7D6wiNZU3RP4cc/JQLP4KQjTGzJeWdC/LjtnQB3LPQ4IpWGW3woAQw3Z3bvtZM2LWdDMDKXVKm8xG6/M2WE4fHp6Tc1B74USdAwghAFBPPjdxwsK1TDxCmqXAVdhjFsysjw74hBY2l0Wi8zpb/gY0pEF+YjGMglfZQ+hZtl/t3ffN18nGJJygix6tVwLPhjTseMPsj7meS/C7Tkz77Xau7+OzYYxBIEJcciPgbcBRQZPersSS2qLGYn1WwurTK1WU2CbUQQKMVo+o5a4FF5r2Aaybp9siLvaItfe1gCwtdG8UT/TdgFjxVkAh/pV6Ey9qdm6zHJ58lJqRM0Jg69mNcypLCA/1/5YXHtlavXer3cDAI23d8/0m03zJYy7sUSppUaj39xtwAk/UKseAWrbNm78wYPfNlwIAdwECH8x2z1hgqgBAC8Rra1MVUCIaqpPTzm2gfAmE/9jiTz/2eVfiI2O1/od3BniEcHYbG/fi+hMTxKNrm/Y9XUehM77IxA5mIQo34BGP1VV995os1nxSEoG5vg7FNYwU1YzJYCyRZQheonTxTO25HkEQ7QKwRWY4jqOqLLK6oY2sPquxmaXLWWoqscAKzmqlGOinZYZUDDGMRywJgAAfVaXZprV/DqraaVyIDgNuf1HIdpq1+nYOWCNWRQAGK9xjIVSSKhO7fERi4mOBfoxUtVKjhKNvbzrVRpnegVUKCGSNMOGuYoaJHVgdPrn1VZxj0DNwVngckV4kfNGGTQAomIKh8EwzNq1dwMDGKkUX4Ewup71BmfU7NvyLgAgyEEMknovJEhLV0C91aQFdmhBmoR52yLGyD8HmZm9KFCkYkMzGeP7jMBILCFHMcBaDCpQhpYgRSqRGNjNUOk0DhqtmIPOio57GLPG53nePhoIuDCQpykCzOLgIxzwZpbRTmoc31dDbBqizK86ahPEpVAGJSIAogIfpTJsrMFAJiBNXqlp6CYmSINUDwM13vCAoofbAGCK1W6PCVj1z7GEXsbK0tOUShsZxBlZSq8O6nR3ypRWKmYJN1kI/yUhBBBCgBiEOIwDGiaMhrHC8RYDe7RcfvmJJStnRM5m/F0/rGlIw4gylMmUrTFzCOZSdIpMAICFUIZdZMHQ2u+/+zBymS/0pxYB7LR2H9KHYt14AFiEqFKhYV5jKYt1Hs/NVcU/nxZk6tI7SQNdDsW40lJ34uGKw4cjRCYYO3TtiDDIikoIAIBeZ7mHakwS7/MOq9//XUUYnL61den1BGFNa+Nb9+joJ2oFwgyDMCkNBBseDuzbXhb5PXP33i9QoFLa0bKbD9YcbGgIXV8Q06HXEkWvf8Lcqc87XkE4EPLtz3meQ+iod0wRUEQpcA8BBpMGVFMQm6AghDlGliC9gw1K99THePrdpPK6aw3+hv7evVs2S6F7Hkpse+XdWrRlq82S6uSU4H6iZ09xKkGspOVW7vt623lmxw0AJ6ydehmo3raiXpfYzb194+qobv1PI6KzV2z/5qvIF2M6DuiJOKoBxmd5F6oAICWE/QxLAPQykZd7Crcsa/SlPdFdc67SMNMlG4ArMcc6JMz21sn++2p2fftOo+8VmrsP7oGAJnJeHWkChP9S/EsUHQyAKPkC/FuIN8zSUZVxy5py7JT0jOvZjx4PHUP3+9vNZTZw5FQy8WmYTdMROEJkv6hwurEJHXsMrxTFVWHTU/uFWZiWZohNbJZOEBujaigWQGtAmMoAABRzJkyIonrdT3kO7DwN2RM5yAaA5GSNXfMVYtTg0WBt5ZOHjxz2QHY2B5ANMCJZ41auwYQiHQCHAAAox44AlX5Zuf+7inDMjgAA1Ps3bzVZB1dDlKknSxWvShmsbyh71H3wYBk4HDwAaOnbD1mqge2GVfjyYM3BhsbX4yrPFkhLIAxP7QBwABzF6NwHsYWJAYIoAKJMg/cO1g81RK9iHrFmxqDr6dObXJZE85hm/vhrTrLsEETowaq9WzY3vmfFwe+OGbv1388zfB8CygGWEkan+V+p3Ld1G+S4WEgIH6wSNvEBAMzZ2XEaNrdgFSWBIJwBVG3wYpICDgcDx+soIMyndU8zlOlaKVDQlwDazAAgfA5YQ4BCZCABTcGUKKBopeByYSguZqGykkBBgUYAygC4rhVprRMI5XpyhPEZKus/D+lAJQLoS8BRjKCsHv3eiE0TIPzFEullICzKF2bcO/pAtJmJOnLcvSXv3Q37wumvBP5AjgDPuAlQRBFoksHnn1ceqN1jiM+8UuaNj0ZnddlVJ4onIqSiuWMvO+h1t/NEaSshJhFR5AcEoAKTwoC6L2yfGlhASpSebfADIChM1mBEaHGoXQbEswB6PU9wEABBYaEGMAKgUCD08k4YALEAGFwA7HyGMpTBGTFdes1TMBtDEDCMxmBMVZkgqqdUs1FNqwbMaZLRZgUABCUlFAoLNX+3nukUsckIQc+47B7PqkifCpQECCY1CsKplAETq2HjBftrlAADiEYbo8pKDmxwN/rokCV7gA10+ucrU9veLjMqJazOEnNln2dUiqOphswckFoKSC+xKI0QrZwqnBlrXLzMGqIgfDQgiAURwEWmrn0cDIOvppRmYMB6htXVEoyMBGseDYAFUdRo9wEcgFKTqJSpZdtOaACIYty/gQJRED1LFIACgwCYyMtgAIoZhgNBIOBwaNC3L4WCAkpYliEUNJRo1VOWy2BUpuZEWXEdEotp6PkKKIgA0H0w+r2q1gQIF8FKiBj585Z8vCLyn+G++X84NbmYrSJmwFGMCuVt9m3fWg6g8ta4mYS3fYB1lkcBYDKAnUZdcUUG0vH/IRQbiKw+yujQHnfFsdNQWqrEdM1ZSRjOEiLgqKJQpHczOFJQhRrFsDQAQFRlf/UZSzDWgGoEaVJhcjLPUsZMKLiBwilMSR3SEMcQwiLKUCoF52N/cAuxmPogAJVKzC8SpjjCYA4TSUHkJKvhE4CJF4DKoaWtnWJldRsP2o7wrvzbmo0QppRSUHy6n8KKOTkYEhIoPnRso8KxVTLPD8CUSWBU8GoqVBAg1RhhA6UgaQgwI0n7WU3Zz7HI7we9QgkXFWbxcYSric7u86DG8I9QTXlVlaWlSNGO1xfvOG2yd+uPrLaVCFAgBLrYRBkarK7OYQCQCgCgEcIAYogCLPdrIgRhFLYeNMSwDEWcSunPO3xxcSQ1CiFKNc7vx4QHPQskiM++8hFQxDAMR5sA4R9AMObnO3Cov0Ff4nQK2p9HGqoSCuRYaN40965tH0d36b9C1vHXRXfqvqrue2GtbOp9O8Y4Ou5k7fDS0sIfGj+PgiEIQE2NmDgKCNPzLDB6Fo1BQKnGEFWuZhiKNWxhQPmutnDzi+f6mahuOb1kQHomBD4/iaxKXowZalbojsrdZ7++vhE984cGrQAAHAAqIRrFpIEQtY7VuFSEpR/qC79+7lyXmbp27QIABEXCwl4vAkEgMZnd0jTOMJ1Q7RPvjoLHfjE0xmAdASJRGnYJEBAEwGia9JMbhxCVEAVggOHgjAQiiolEAPl+W7OAYsLYKDUjFamVDGJjZgNg4WdQCB+Zg8g5DyI9l9vVtG4vnqXgdIpa6Fj7v+CAVZKIAFGKEKC40A5OAYAqmu9JTMCrcqaZ7RMTTQZqaEM1hnKc+yhkZ3Ngt/PhZBvKyXwypqwlErIAAAr4bICAzlkZiDREACGGMqxxW1lZgCHqPgRgBwAGsidykDlUB3YHDzk/H38WWgShnR8AADIyCABAdfXJMg3BySCHewAAnOv63zvuepWq4ecnAAUqiKLGcJY+mIKV1+RvWKquI4jvE53VpRm4XBhycvQ/3TOciKUSRveL9RHICCU5mZlkBaEYgvEBoBRB9+4GyByqAwCgAcwCBQ4QoaHgJlUpAYOPr+TD4404BvsBUYRZbAg/IxMGO6IA4igK3zPsUpz1BDGCqIYoJdjnYal2GIA2X9q6SwsAoOFU8tD8EcrC7zyBrMlCuHTCF4gCZiiiPyez5OSw3oKCA7bsfstUXpf7Y7OMWziVlLMMn+I3GFpAYeHB0BcFsHXs2EHmqY5gEgjpFAoFRFT0qyw8AoABIXSu3UIDhClgS+i76lsUcS/Eduo5rKYw75PG37Nm92gVB1J1NSEUYxrgiRSykkQ7DZOgAZTUaq3G6Vy2Tn1G1hfmrW58fXJ2dnNeVT2le/bUwwXE0CkgoiGE6wxmczqk+/32FiwvB2x+E9dD4nUPsxr1x7ir11XYsAmj6EdZvflfVBBcCCAY+Y0ktzvemp1NfZTRACMAElrcYCihAABqUC7DBvUoaLRD2IIKAIQOiK0zWIcRxLCIKigUGNIqMM9dwZjiMwFQIQAAkVQ3ZTk9B/xQO8CnxaIog93Op+isQ2oQ00mj4EFhDoEiRIDgs2Z2UkSCwZqaBs4Yu4UwzD2BWMvERE/7JypE0Qf2HHOsQblRAmgNAOWyOdAUdvz/JtGqhZEotVFEFHcmYDgMAAUFBMCFuYC4kLLx2YQzPaL6/R9zHNnfYI591Zzdez2LqQcQXKYisFIMMZjQuvAmwyBKbQZN1YUyf4oRgJ2GzEaNBYRMlNMaKVLIf9UwMmBKOFZTiQ8A3Cbyms0rXybrjMstXQZs5gjdrWKiYoQvp5hc7pcDEwgmKkUQ/fNvCQAiEABATP3JPBLdvDPhdUutXfuNRAQXESA2jHHHAIIsjdCxIc/BhQDOf9YlohqjYT7Ny8LntGtrBWHESaCzAkAUR5TvWcnnOnz4cBnAYYjK7juNsMzU6G4Dehip8gUmqhsh1i4h1MMN6jOE8mWAsUGvBYMNAABmMwVw4eofhPLYzj1fVTnDw6auAz9miH8tRjjGg9BlBDE2hBgLj1QCAKAjgXc0wL1kU9QK45WDigwgBXh/8EVZ5lcSjrvhWPfBHWxAigiBTpIWKMQEqxyicQEAAEoIII1lAcw/vaAYmh+eErNKEcsltbTF+ms+OmVEeYTnrpfS4/va0vqVqRyJJjJzDAGup6DIxmDwgt1Vpmmp/fO5iJCVnUxVhg3wRCs8UXRi109mIRQgf1WVZItL2Mcj7NMj+N7v9b6HeC4KMG6jMsjCEbKNnqp7gTNxdTwi3/tPlhbGJSQjBshhGwpsqikv9wMUAxQUAABAbHxCkKH0oKoGvpOqqgJhQKAAAMbEWE2PmGpOC25sqDh1GkpLabD82Dqc2LKSZVEqRaQlQjiaoVDKyYGFlbt37k5ITkAsoBMGWd3irjrVOPMQBWprJfnU0dWmpMSjgNm2BLNXIYSMDKVFAVlb5NlNCwFKCUDBbyUmQVxyGsMSspfByg6EyX6MtN0aqOsxVV5mj5xeUHN0z6GIvy6VH9tqiEvcomE2iTK4PWbAgpF6hFD1/VqGro8jgFhN8ehl/3p3xanTUHorhAEJBcpPbI9KTDiEGJwOiM1mEGkgmvJvEqx/28jiWiIHvwpWnKoMni47zMbE72MQ5jAlAEj5USd5PjdGV6yUNP1JALASQgwc0d6tLfzmyeiEZrV6UPY3nCr9Nio2EQwIV+sD2iZPdVlliFAMjUFMUrLMUHLIR3zby/bv9yVy8KWsNx6hLKnjgZRiVfqgbte3C/nmmeMwUYLHd3331pnkcJP8D4BG07P/lvyicAn9v56XbOAsVw0sjO7a5/lGnFETqfj/Sn4uf/21+/zL0mP8c5UiRT+VxP7yenyeUlp8ngo/dNbrflGa62pcUnzuaxpZCr8oIXa58Hne9fwLvnFJ8q/Kv39B7lIAV6NxanTfSMjyfKXGjT9zNSob/+U1je5B0dl/+5zzgy5sfhxMNsCvQpgW1OtaoKg1q6pbQl9z4n82gjVJkzTJn7U+aHy83UzSY16QGH2QytoRDSOOZ7AdAK5GRH7feNI3o7y8MNAIfJsAoUma5P8rIAAAk5Dd434J6xwaCxyiQBFABda09Sk7vn6lGECG39Hm7v8A3TaN/6XqtXIAAAAASUVORK5CYII=" alt="Change Maker Karriere Beratung" class="sb-logo"><h1>Strategische<br>Rollenentwicklung</h1><div class="sub">Q2 Programm</div></div>
+  <div class="sb-prog"><div class="sb-prog-lbl">Fortschritt</div><div class="sb-bar"><div class="sb-fill" id="sb-fill" style="width:0%"></div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-item active" onclick="go('dash')"><div class="sb-dot"></div><div><div class="si-num">00</div><div class="si-name">Dashboard</div><div class="si-sub">Übersicht · Einstieg</div></div></div>
+    <div class="sb-item" id="sb-ist" onclick="go('ist',0)"><div class="sb-dot"></div><div><div class="si-num">01</div><div class="si-name">Ist-Analyse</div><div class="si-sub">Wertbeitrag heute vs. Potenzial</div></div></div>
+    <div class="sb-item" id="sb-blind" onclick="go('blind',0)"><div class="sb-dot"></div><div><div class="si-num">02</div><div class="si-name">Strategische Blindspots</div><div class="si-sub">Was diese Funktion nicht sieht</div></div></div>
+    <div class="sb-item" id="sb-erk" onclick="go('erk',0)"><div class="sb-dot"></div><div><div class="si-num">03</div><div class="si-name">Erkundung</div><div class="si-sub">Feldgespräche · Systemanalyse</div></div></div>
+    <div class="sb-item" id="sb-stoss" onclick="go('stoss',0)"><div class="sb-dot"></div><div><div class="si-num">04</div><div class="si-name">Stoßrichtung</div><div class="si-sub">Initiativen · KPIs · Ressourcen</div></div></div>
+    <div class="sb-item" id="sb-papier" onclick="go('papier')"><div class="sb-dot"></div><div><div class="si-num">05</div><div class="si-name">Strategiepapier</div><div class="si-sub">Boardroom-ready Output</div></div></div>
+    <div class="sb-item" id="sb-sessions" onclick="go('sessions')"><div class="sb-dot"></div><div><div class="si-num">06</div><div class="si-name">Sparring-Fahrplan</div><div class="si-sub">4 Sessions · Vorbereitung</div></div></div>
+  </nav>
+  <div class="sb-foot">
+    <button class="sb-btn" onclick="saveAll()">💾 Speichern</button>
+    <button class="sb-btn gold" onclick="genPapier();go('papier')">📄 Strategiepapier</button>
+  </div>
+</aside>
+
+<div class="mob-hdr">
+  <div class="mob-inner">
+    <div class="mob-top"><div><div class="mob-h1">Strategische Rollenentwicklung</div><div style="font-size:11px;color:var(--teal-l);">CMKB · Q2</div></div></div>
+    <div class="mob-bar-wrap"><div class="mob-bar" id="mob-bar" style="width:0%"></div></div>
+    <div class="mob-tabs">
+      <div class="mob-tab active" onclick="go('dash')"><span class="mn">00</span>Start</div>
+      <div class="mob-tab" onclick="go('ist',0)"><span class="mn">01</span>Ist</div>
+      <div class="mob-tab" onclick="go('blind',0)"><span class="mn">02</span>Blind</div>
+      <div class="mob-tab" onclick="go('erk',0)"><span class="mn">03</span>Erkund.</div>
+      <div class="mob-tab" onclick="go('stoss',0)"><span class="mn">04</span>Stoß</div>
+      <div class="mob-tab" onclick="go('papier')"><span class="mn">05</span>Papier</div>
+      <div class="mob-tab" onclick="go('sessions')"><span class="mn">06</span>Sessions</div>
+    </div>
+  </div>
+</div>
+
+<main class="main" id="main">
+
+<!-- DASHBOARD -->
+<div class="screen active" id="screen-dash">
+<div class="dash">
+  <div class="dash-hero">
+    <div class="dash-tag">CMKB · Strategische Rollenentwicklung · Q2</div>
+    <div class="dash-title">Was könnte — und sollte —<br>dieser Bereich liefern?</div>
+    <div class="dash-sub">Dieser Prozess unterstützt dich dabei, den strategischen Wertbeitrag sichtbar zu machen — und ein boardroom-fähiges Strategiepapier zu entwickeln.</div>
+    <div class="dash-ctx">
+      <div class="dash-ctx-val" id="dash-ctx-val">Noch kein Kontext gesetzt</div>
+      <div class="dash-ctx-edit" onclick="toggleSetup()">✎ Kontext setzen</div>
+    </div>
+  </div>
+
+  <div id="setup-panel" class="setup-panel">
+    <div class="setup-title">Kontext setzen</div>
+    <div style="background:var(--red);border-radius:16px;padding:22px 26px;margin-bottom:32px;border-left:4px solid var(--redf);">
+      <div style="font-size:12px;font-weight:700;color:var(--redf);margin-bottom:8px;font-family:'DM Mono',monospace;">⚠️ DATENSPEICHERUNG — BITTE LESEN</div>
+      <div style="font-size:16px;color:var(--redf);line-height:1.75;"><strong>Daten liegen ausschliesslich lokal in diesem Browser.</strong> Cache leeren = alles weg.<br><br><strong>👉 Speichere den Link jetzt als Lesezeichen — immer denselben Browser, dasselbe Gerät.</strong></div>
+      <div style="height:1px;background:rgba(192,84,74,.2);margin:16px 0;"></div>
+      <div style="font-size:12px;font-weight:700;color:var(--grnf);margin-bottom:8px;font-family:'DM Mono',monospace;">🔒 MAXIMALE VERTRAULICHKEIT BY DESIGN</div>
+      <div style="font-size:16px;color:var(--grnf);line-height:1.75;"><strong>Kein Server. Keine Cloud. Deine Daten verlassen deinen Rechner nie.</strong><br><strong>Unternehmensnutzung:</strong> HTML-Datei auf Firmenrechner speichern und dort im Firmenbrowser öffnen.</div>
+    </div>
+    <div class="fw">
+      <div class="fl">Funktion & Verantwortungsbereich</div>
+      <div class="fs">Titel · Bereich · Unternehmen · Teamgröße · Berichtslinie</div>
+      <textarea id="ctx-funktion" oninput="D['ctx-funktion']=this.value;updateCtx()" placeholder="z.B. Head of Strategy · Pharmaunternehmen 800 MA · 5 FTE · Reporting an CEO..."></textarea>
+    </div>
+    <div class="fw">
+      <div class="fl">Zeithorizont</div>
+      <div class="chip-row">
+        <div class="chip" onclick="selChip(this)">2 Jahre</div>
+        <div class="chip active" onclick="selChip(this)">3 Jahre</div>
+        <div class="chip" onclick="selChip(this)">5 Jahre</div>
+      </div>
+    </div>
+    <div class="fw">
+      <div class="fl">Was soll dieses Strategiepapier bewirken?</div>
+      <div class="fs">Welches Gespräch · welche Entscheidung · welches Ziel</div>
+      <textarea id="ctx-ziel" oninput="D['ctx-ziel']=this.value" placeholder="z.B. Gespräch mit CEO · Grundlage für Budgetantrag..."></textarea>
+    </div>
+    <button class="btn-p gold" onclick="saveAll();toggleSetup()">Kontext speichern & schließen</button>
+  </div>
+
+  <div class="quick-row">
+    <button class="quick-btn gold-btn" onclick="genPapier();go('papier')">
+      <span class="qb-icon">📄</span><span class="qb-title">Strategiepapier</span><span class="qb-sub">Aktuellen Stand generieren</span>
+    </button>
+    <button class="quick-btn" onclick="go('sessions')">
+      <span class="qb-icon">🎯</span><span class="qb-title">Sparring-Fahrplan</span><span class="qb-sub">Sessions · Vorbereitung · Aufträge</span>
+    </button>
+    <button class="quick-btn" onclick="saveAll()">
+      <span class="qb-icon">💾</span><span class="qb-title">Speichern</span><span class="qb-sub">Alle Eingaben sichern</span>
+    </button>
+  </div>
+
+  <!-- INTRO: Warum · Engagement · Evidenz -->
+  <div style="margin-bottom:48px;">
+    <button onclick="this.parentElement.querySelector('.intro-body').classList.toggle('intro-open');this.querySelector('.intro-arrow').style.transform=this.parentElement.querySelector('.intro-body').classList.contains('intro-open')?'rotate(180deg)':'rotate(0deg)'" style="width:100%;background:var(--white);border:2px solid var(--grey-l);border-radius:18px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 2px 12px rgba(11,57,72,.06);" onmouseover="this.style.borderColor='var(--teal-m)'" onmouseout="this.style.borderColor='var(--grey-l)'">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:22px;">🗺️</span>
+        <div style="text-align:left;"><div style="font-size:16px;font-weight:700;color:var(--teal);">Wie dieses Instrument funktioniert</div><div style="font-size:14px;color:var(--grey-d);margin-top:3px;">Warum · Evidenz · Übersicht · Arbeitslogik</div></div>
+      </div>
+      <span class="intro-arrow" style="font-size:18px;color:var(--teal-m);transition:transform .25s;">▼</span>
+    </button>
+    <div class="intro-body" style="max-height:0;overflow:hidden;transition:max-height .4s ease;">
+      <div style="background:var(--white);border:2px solid var(--grey-l);border-top:none;border-radius:0 0 18px 18px;padding:36px 36px 32px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
+          <div style="background:var(--teal);border-radius:16px;padding:28px;">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace;">Warum dieses Instrument?</div>
+            <div style="font-size:16px;color:var(--white);line-height:1.8;">Strategische Führungskräfte die den Wertbeitrag ihres Bereichs explizit und belastbar formulieren — <strong style="color:var(--teal-l);">bevor jemand danach fragt</strong> — erhalten mehr Ressourcen, größere Mandate und beschleunigen ihre Karriereentwicklung signifikant.</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:12px;font-family:'DM Mono',monospace;">— Dutton & Ashford (1993) · Ibarra (2015)</div>
+          </div>
+          <div style="background:var(--gold-l);border-radius:16px;padding:28px;border:2px solid var(--gold);">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace;">Was entsteht?</div>
+            <div style="font-size:16px;color:var(--text);line-height:1.8;">Ein boardroom-fähiges <strong>Strategiepapier</strong> — mit Ist-Stand, strategischer These, 2–3 Initiativen, KPIs und Ressourcenbedarf. Präsentierbar beim CEO, Vorstand oder Aufsichtsrat.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--sand);border-left:4px solid var(--teal-m);border-radius:0 12px 12px 0;padding:22px 26px;margin-bottom:28px;">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-m);margin-bottom:10px;font-family:'DM Mono',monospace;">Arbeitslogik</div>
+          <div style="font-size:16px;color:var(--text);line-height:1.85;">Die Feldgespräche und Rechercheaufgaben sind die analytische Grundlage für deine Strategieentwicklung — keine Zusatzarbeit. <strong>Kein vorgeschriebener Weg</strong> — gehe rein wo du gerade stehst. Zeitaufwand: ca. 1h pro Woche über 3 Monate.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+          <div style="background:#0B3948;border-radius:12px;padding:16px 14px;">
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;font-family:'DM Mono',monospace;">01 · Ist-Analyse</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.55;">Was liefert dieser Bereich — und was könnte er liefern?</div>
+          </div>
+          <div style="background:#512da8;border-radius:12px;padding:16px 14px;">
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;font-family:'DM Mono',monospace;">02 · Blindspots</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.55;">Was sieht diese Funktion nicht — weil sie zu nah dran ist?</div>
+          </div>
+          <div style="background:#c45400;border-radius:12px;padding:16px 14px;">
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;font-family:'DM Mono',monospace;">03 · Erkundung</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.55;">Was wird in 3–5 Jahren gebraucht — das heute niemand liefert?</div>
+          </div>
+          <div style="background:#1e5c1e;border-radius:12px;padding:16px 14px;">
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;font-family:'DM Mono',monospace;">04 · Stoßrichtung</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.55;">Welche 2–3 Initiativen mit messbarem Wertbeitrag?</div>
+          </div>
+          <div style="background:#9f8252;border-radius:12px;padding:16px 14px;">
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;font-family:'DM Mono',monospace;">05 · Papier</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.55;">Boardroom-ready Output</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <style>
+  .intro-body.intro-open { max-height: 2000px !important; }
+  </style>
+
+  <div class="module-grid">
+    <div class="module-tile" id="tile-ist" onclick="go('ist',0)">
+      <div class="mt-header" style="background:var(--teal);">
+        <div class="mt-num">01</div><div class="mt-title">Ist-Analyse</div>
+        <div class="mt-status empty" id="st-ist">○ offen</div>
+      </div>
+      <div class="mt-body">
+        <div class="mt-question">Was liefert dieser Bereich — und was könnte, ja sollte er liefern?</div>
+        <div class="mt-entries">
+          <div class="mt-entry" onclick="event.stopPropagation();go('ist',0)">Wertbeitrag heute</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('ist',2)">Zahlen für das Board</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('ist',4)">Potenzial & Blocker</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-tile" id="tile-blind" onclick="go('blind',0)">
+      <div class="mt-header" style="background:var(--purpf);">
+        <div class="mt-num">02</div><div class="mt-title">Strategische Blindspots</div>
+        <div class="mt-status empty" id="st-blind">○ offen</div>
+      </div>
+      <div class="mt-body">
+        <div class="mt-question">Was sieht diese Funktion nicht — weil sie zu nah dran ist?</div>
+        <div class="mt-entries">
+          <div class="mt-entry" onclick="event.stopPropagation();go('blind',0)">Challenger-Gespräche</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('blind',1)">Annahmen hinterfragen</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('blind',2)">Leiter der Schlussfolgerungen</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-tile" id="tile-erk" onclick="go('erk',0)">
+      <div class="mt-header" style="background:var(--ambf);">
+        <div class="mt-num">03</div><div class="mt-title">Erkundung</div>
+        <div class="mt-status empty" id="st-erk">○ offen</div>
+      </div>
+      <div class="mt-body">
+        <div class="mt-question">Was wird in 3–5 Jahren gebraucht — das heute noch niemand liefert?</div>
+        <div class="mt-entries">
+          <div class="mt-entry" onclick="event.stopPropagation();go('erk',0)">Megatrends recherchieren</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('erk',2)">Feldgespräche starten</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('erk',5)">Systemlücken identifizieren</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-tile" id="tile-stoss" onclick="go('stoss',0)">
+      <div class="mt-header" style="background:var(--grnf);">
+        <div class="mt-num">04</div><div class="mt-title">Strategische Stoßrichtung</div>
+        <div class="mt-status empty" id="st-stoss">○ offen</div>
+      </div>
+      <div class="mt-body">
+        <div class="mt-question">Welche 2–3 Initiativen mit messbarem Wertbeitrag?</div>
+        <div class="mt-entries">
+          <div class="mt-entry" onclick="event.stopPropagation();go('stoss',0)">Strategische These</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('stoss',1)">Initiative 01</div>
+          <div class="mt-entry" onclick="event.stopPropagation();go('stoss',4)">Narrativ testen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="papier-tile" onclick="genPapier();go('papier')">
+    <div class="mt-header" style="background:linear-gradient(90deg,var(--gold),#8a6e3f);">
+      <div class="mt-num">05</div><div class="mt-title">Strategiepapier</div>
+      <div class="mt-status empty" id="st-papier">○ noch nicht generiert</div>
+    </div>
+    <div class="mt-body" style="display:flex;align-items:center;gap:22px;">
+      <div><div class="mt-question" style="margin-bottom:6px;">Boardroom-ready Output</div><div style="font-size:15px;color:var(--grey-d);">Generieren · Versionen speichern · Als PDF sichern</div></div>
+      <div style="font-size:40px;margin-left:auto;">📄</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:8px 0;"><span style="font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;">📚 Dutton & Ashford (1993) · Ibarra (2015)</span></div>
+</div>
+</div>
+
+<!-- WIZARD SCREENS -->
+<div class="screen" id="screen-ist"><div class="wizard" id="wiz-ist"></div></div>
+<div class="screen" id="screen-blind"><div class="wizard" id="wiz-blind"></div></div>
+<div class="screen" id="screen-erk"><div class="wizard" id="wiz-erk"></div></div>
+<div class="screen" id="screen-stoss"><div class="wizard" id="wiz-stoss"></div></div>
+
+<!-- PAPIER -->
+<div class="screen" id="screen-papier">
+<div class="papier-wrap">
+  <div style="font-family:'DM Serif Display',serif;font-size:34px;color:var(--teal);margin-bottom:36px;">Strategiepapier</div>
+  <div style="display:flex;gap:14px;margin-bottom:44px;">
+    <button class="btn-p" style="flex:2;" onclick="genPapier()">📄 Generieren</button>
+    <button class="btn-p" style="flex:1;background:var(--teal-m);" onclick="saveVersion()">💾 Version speichern</button>
+  </div>
+  <div id="papier-preview"></div>
+  <div style="margin-top:48px;font-family:'DM Serif Display',serif;font-size:24px;color:var(--teal);margin-bottom:22px;">Versionshistorie</div>
+  <div id="version-list"><div style="font-size:16px;color:var(--grey-d);font-style:italic;">Noch keine Versionen gespeichert.</div></div>
+</div>
+</div>
+
+<!-- SESSIONS -->
+<div class="screen" id="screen-sessions">
+<div class="papier-wrap" id="sessions-wrap"></div>
+</div>
+
+</main>
+</div>
+
+<div class="fab-row">
+  <button class="fab" onclick="saveAll()">💾 Speichern</button>
+  <button class="fab gold" onclick="genPapier();go('papier')">📄 Papier</button>
+</div>
+
+<script>
+const KEY='cmkb_v5';
+let D={};
+const WS={ist:0,blind:0,erk:0,stoss:0};
+
+// ── WIZARD STEPS ─────────────────────────────────────────────────
+const W={
+  ist:{col:'#0B3948',mod:'01 · Ist-Analyse',steps:[
+    {tag:'Ergebnisse',q:'Welche Entscheidungen wurden durch diese Funktion besser — messbar?',sub:'Nicht Aktivitäten — Outcomes. Welche Entscheidung wurde durch diese Funktion besser, schneller oder sicherer?',f:'ist-ergebnisse',t:'ta',cta:{title:'Hol dir die Belege. Jetzt.',text:'Die letzten <strong>3 Berichte, Präsentationen oder Analysen</strong> aus diesem Bereich — raus aus dem Ordner, auf den Tisch.<br><br>Markiere: Was davon hat zu einer konkreten Entscheidung geführt? Was war Information die niemand genutzt hat?<br><br><em>Das dauert 30 Minuten. Und es wird unbequem sein.</em>',duration:'30 min · Output-Audit',durationMin:30},ph:'z.B. Marktanalyse für M&A-Target → Entscheidungsvorlage die zur Akquisition geführt hat · Strategieworkshop → 3 Prioritäten definiert...',evid:'Aktivitäten sind keine Ergebnisse. Wer seinen Wertbeitrag nicht präzise benennen kann, wird ihn nicht verteidigen können.',esrc:'Mintzberg (1973)'},
+    {tag:'Mandat vs. Realität',q:'Was verspricht das Mandat — und was kommt tatsächlich an?',sub:'Die Lücke zwischen Mandat und tatsächlichem Wertbeitrag ist selten zufällig — sie hat strukturelle Ursachen.',f:null,t:'compare',fl:'ist-versprochen',fr:'ist-geliefert',ll:'Was das Mandat verspricht',lr:'Was tatsächlich ankommt',phl:'z.B. Strategische Steuerung · Marktbeobachtung · M&A-Support...',phr:'z.B. Koordination und Berichterstellung · Reaktive Analysen auf Anfrage...'},
+    {tag:'Zahlen für das Board',q:'Was sind die Kennzahlen dieser Funktion?',sub:'Fülle aus was du kennst — lass leer was du nicht weißt. Grobe Schätzungen sind besser als keine Zahlen.',f:null,t:'nums',nums:[
+      {id:'z-umsatz',l:'Beeinflusster Umsatz',s:'Direkt verantwortet oder maßgeblich beeinflusst',ph:'z.B. 8.000.000',u:'€ / Jahr'},
+      {id:'z-entscheidungsvolumen',l:'Entscheidungsvolumen',s:'Strategische Entscheidungen die durch diese Funktion vorbereitet werden',ph:'z.B. 15.000.000',u:'€ beeinflusst'},
+      {id:'z-kosten-gesamt',l:'Ressourceneinsatz gesamt',s:'Personal + Budget + Overhead',ph:'z.B. 570.000',u:'€ / Jahr'},
+      {id:'z-teamgroesse',l:'Teamgröße',s:'FTE direkt in dieser Funktion',ph:'z.B. 4,5',u:'FTE'},
+      {id:'z-reaktiv',l:'% Zeit reaktiv',s:'Anteil der Kapazität in operativen Anfragen',ph:'z.B. 70',u:'%'},
+      {id:'z-strategisch',l:'% Zeit strategisch',s:'Anteil der Kapazität für proaktive Strategiearbeit',ph:'z.B. 30',u:'%'},
+    ]},
+    {tag:'Nutzung',q:'Wer trifft auf Basis dieser Arbeit Entscheidungen — mit welchem Gewicht?',sub:'Die Qualität des Wertbeitrags zeigt sich daran, wer auf dieser Basis handelt — und wer nicht.',f:'ist-nutzung',t:'ta',cta:{title:'Frag jemanden. Den der es wirklich weiß.',text:'Nicht den der nett antwortet. <strong>Den der diese Outputs tatsächlich nutzt</strong> — oder eben nicht.<br><br>Eine Frage, 15 Minuten: <em>«Was tust du mit dem was wir liefern — und was fehlt dir?»</em><br><br>Keine Rechtfertigung. Nur Zuhören.',duration:'15 min · 1 Gespräch',durationMin:15},ph:'z.B. CEO nutzt Analysen für Investitionsentscheidungen · Vorstand erhält Jahresplanung aber entscheidet davon weitgehend unabhängig...',evid:'Wer formal entscheidet und wer faktisch entscheidet, fällt in strategischen Fragen strukturell auseinander — geprägt durch Koalitionen und selektive Information.',esrc:'Eisenhardt & Bourgeois (1988)',links:[{i:'🕵️',tt:'Hidden Agenda Tool',s:'Was Stakeholder wirklich antreibt — vor dem Gespräch',h:'https://kathrinheinrich.github.io/cmkb-hidden-agenda/hidden_agenda.html'}]},
+    {tag:'Potenzial',q:'Was könnte — und sollte — dieser Bereich liefern, das heute eine strategische Lücke lässt?',sub:'Ohne Ressourcenvorbehalt denken. Was wäre möglich — um diesen Bereich zukunftsfähig aufzustellen?',f:'ist-potenzial',t:'ta',ph:'z.B. Früherkennung strategischer Risiken · Systematische Wettbewerbsbeobachtung · Strategische Entscheidungsvorlagen die tatsächlich zur Grundlage von Vorstandsentscheidungen werden...'},
+    {tag:'Blocker',q:'Was sind die realen Blocker — strukturell, kulturell, ressourcenseitig?',sub:'Strukturelle Blocker sind Systemlogik, keine persönlichen Defizite. Was liegt im Einflussbereich dieser Funktion — und was nicht?',f:'ist-blocker',t:'ta',ph:'z.B. Kein direktes Mandat für proaktive strategische Initiativen · Ressourcen zu 80% in reaktiven Aufgaben gebunden...'},
+  ]},
+  blind:{col:'#512da8',mod:'02 · Strategische Blindspots',steps:[
+    {tag:'Was diese Funktion nicht sieht',q:'Was sieht diese Funktion nicht — weil sie zu nah dran ist?',sub:'Operative Nähe erzeugt strategische Blindheit. Welche externen Entwicklungen gehen im Tagesgeschäft unter?',f:'bs-tagesgeschaeft',t:'ta',cta:{title:'Raus aus dem Büro. Jetzt.',text:'Drei Gespräche. <strong>Drei Menschen die einen anderen Blickwinkel haben.</strong> Einer davon sollte dich eigentlich nerven.<br><br>Frage: <em>«Was könnte dieser Bereich leisten, das er heute nicht leistet — und was hindert ihn?»</em><br><br>Dann schweigen. Nicht erklären. Nicht rechtfertigen.',duration:'3 × 20 min · Challenger-Gespräche',durationMin:60},ph:'z.B. Wie sich die Buying-Center unserer Kunden strukturell verändern · Welche neuen Wettbewerber aus angrenzenden Märkten kommen...',evid:'Externe Perspektiven erhöhen die Qualität strategischer Entscheidungen um bis zu 40%.',esrc:'Argyris & Schön (1978)',links:[{i:'🧭',tt:'Gesprächs-Kompass',s:'Challenger-Gespräche vorbereiten',h:'https://kathrinheinrich.github.io/gespraeche_kompass/gespraeche_kompass.html'},{i:'🕵️',tt:'Hidden Agenda Tool',s:'Stakeholder-Dynamiken verstehen',h:'https://kathrinheinrich.github.io/cmkb-hidden-agenda/hidden_agenda.html'},{i:'🌐',tt:'Stakeholder Netzwerk App',s:'Stakeholder-Landschaft visualisieren',h:'https://kathrinheinrich.github.io/cmkb-stakeholder-netzwerk'},{i:'👂',tt:'Zuhör-App',s:'Gesprächsnotizen strukturiert erfassen',h:'https://kathrinheinrich.github.io/cmkb-zuhoer-app/zuhoer_app.html'}]},
+    {tag:'Ungeprüfte Annahmen',q:'Welche Annahmen steuern diese Strategie — und wurden sie je ernsthaft geprüft?',sub:'Was gilt als selbstverständlich — ohne dass es je jemand hinterfragt hat?',f:'bs-annahmen',t:'ta',ph:'z.B. Unser Kernmarkt wächst weiter linear · Unser Geschäftsmodell ist disruptionssicher · Die wichtigsten Entscheidungsträger beim Kunden bleiben dieselben...'},
+    {tag:'Leiter der Schlussfolgerungen',q:'Welche Überzeugung über diese Funktion ist zum Limit geworden?',sub:'Wir verwechseln unsere Schlussfolgerungen mit der Realität. Welche eingeschriebene Überzeugung begrenzt das Mandat?',f:'bs-leiter',t:'ta',ph:'z.B. Situation: Mein Vorschlag für eine neue Berichtslinie wurde abgelehnt. Interpretation: keine Ambitionen erwünscht. Überzeugung: diese Funktion ist strukturell gedeckelt. Handlung: keine weiteren Vorschläge mehr. → Stimmt das wirklich?',info:'Argyris (1990) · Senge, The Fifth Discipline (1990)'},
+    {tag:'Signale aus dem Umfeld',q:'Wo entstehen die strategisch relevanten Signale — die diese Funktion heute nicht systematisch empfängt?',sub:'Branchenverbände · Kundengremien · Zukunftsinstitute · internationale Märkte · Start-up-Ökosystem',f:'bs-orte',t:'ta',ph:'z.B. Jahreskonferenz der Branchenverbände · Strategiegespräche mit Key-Account-Entscheidern · Zukunftsinstitut...'},
+  ]},
+  erk:{col:'#c45400',mod:'03 · Erkundung',steps:[
+    {tag:'Megatrends',q:'Welche Megatrends verändern den Wertbeitrag dieser Funktion — und bis wann?',sub:'Nur die Trends die konkreten Handlungsbedarf erzeugen — alles andere ist Rauschen.',f:'mk-megatrends',t:'ta',ph:'z.B. KI verändert strategische Analysearbeit fundamental · ESG-Regulierung erzeugt neuen Steuerungsbedarf · Demografischer Wandel verändert Kundenbasis...',res:{l:'🔍 Recherche-Quellen',links:[{h:'https://www.zukunftsinstitut.de/megatrends',t:'Zukunftsinstitut — Megatrend-Map',d:'kostenlos'},{h:'https://www.weforum.org/publications/the-future-of-jobs-report-2025',t:'WEF — Future of Jobs Report',d:'jährlich aktualisiert'},{h:'https://www.mckinsey.com/mgi',t:'McKinsey Global Institute',d:'Branchenreports kostenlos'}]}},
+    {tag:'Märkte von morgen',q:'Was verändert sich strukturell in diesem Markt — und welche Funktion wird dadurch obsolet oder unverzichtbar?',sub:'Konsolidierung · Disruption · neue Marktteilnehmer · Margenerosion · Substitution durch Technologie',f:'mk-maerkte',t:'ta',ph:'z.B. Konsolidierung durch M&A reduziert Kundenzahl · Neue Wettbewerber aus asiatischen Märkten · Plattformisierung verändert Vertriebsstrukturen...'},
+    {tag:'Strategische Erkundungen',q:'8–12 Erkundungen — raus aus dem Büro, rein in den Markt.',sub:'Systemintern · Systemgrenzen · Analoge Felder. Die Erkenntnisse aus diesen Gesprächen und Beobachtungen sind die Grundlage der Marktanalyse — keine Zusatzaufgabe.',f:null,t:'erk',cta:{title:'Plant das erste Gespräch. Heute.',text:'<strong>Systemintern:</strong> Wer in dieser Organisation sieht am meisten — weil er am wenigsten involviert ist? Den fragen.<br><br><strong>Systemgrenzen:</strong> Ruf den Kunden an. Den unbequemen.<br><br><strong>Analoge Felder:</strong> Geh irgendwo hin wo du noch nie warst. Mit einer Frage im Gepäck: <em>«Was sehe ich hier — das sich übertragen lässt?»</em><br><br>8–12 Erkundungen. Das klingt nach viel. Es sind 3 Monate.',duration:'Erste Erkundung · 20–60 min',durationMin:30}},
+    {tag:'Synthese',q:'Welche strategische Lücke im Unternehmen wächst — und wer schließt sie, wenn nicht dieser Bereich?',sub:'Kein Konjunktiv mehr. Was folgt aus dieser Analyse — zwingend?',f:'mk-fazit',t:'ta',ph:'z.B. Dieser Bereich muss die Funktion strategischer Früherkennung übernehmen — als proaktive Navigationsfunktion, nicht als reaktiver Analysedienstleister.',evid:'Führungskräfte die strategische Trends systematisch beobachten und in Handlungsbedarf übersetzen erhalten früher strategische Mandate.',esrc:'Rohrbeck & Kum (2018)'},
+  ]},
+  stoss:{col:'#1e5c1e',mod:'04 · Strategische Stoßrichtung',steps:[
+    {tag:'Strategische These',q:'Die strategische These — in einem präzisen Satz.',sub:'Eine These als prüfbare Behauptung über zukünftigen Wertbeitrag — mit Konsequenz wenn sie nicht eintrifft.',f:'str-these',t:'ta',ph:'z.B. In 3 Jahren ist dieser Bereich die Funktion, die in diesem Unternehmen strategische Navigationsfähigkeit schafft — nicht als Stabseinheit, sondern als zentraler Gestaltungsakteur.'},
+    {tag:'Initiative 01 — Was',q:'Was ist die erste strategische Initiative — konkret beschrieben?',sub:'Nicht zu abstrakt. Was genau, für wen, mit welcher Wirkung?',f:'i1-was',t:'ta',ph:'z.B. Strategisches Früherkennungssystem: Systematische Beobachtung von 5 definierten Markt- und Technologiebereichen mit quartalsweiser Handlungsempfehlung für die Geschäftsführung'},
+    {tag:'Initiative 01 — Zahlen',q:'Was ist der Wertbeitrag von Initiative 01 — in Zahlen?',sub:'Konservative Schätzungen sind ausreichend. Ein Board mit groben Zahlen ist besser als eines ohne.',f:null,t:'nums',nums:[
+      {id:'i1-wertbeitrag-zahl',l:'Erwarteter Wertbeitrag',s:'Umsatz · Einsparung · Risikovermeidung',ph:'z.B. 500.000',u:'€ / Jahr (konservativ)'},
+      {id:'i1-invest',l:'Investitionsbedarf',s:'Personal + Budget + extern',ph:'z.B. 85.000',u:'€ (einmalig oder p.a.)'},
+      {id:'i1-breakeven',l:'Break-even',s:'Ab wann übersteigt Wertbeitrag den Invest?',ph:'z.B. 18',u:'Monate'},
+      {id:'i1-kpi',l:'KPI / Messgröße',s:'Wie wird Erfolg gemessen?',ph:'z.B. Anzahl umgesetzter Empfehlungen / Jahr',u:''},
+    ]},
+    {tag:'Initiative 02',q:'Was ist die zweite strategische Initiative?',sub:'Welche strategische Lücke schließt diese Initiative — die Initiative 01 nicht adressiert?',f:'i2-was',t:'ta',ph:'z.B. Strategische Entscheidungsbegleitung: Strukturierte Einbindung dieser Funktion in die Top-5-Entscheidungsprozesse als Analysepartner und strategischer Sparring'},
+    {tag:'Narrativ testen',q:'Wie klingt die strategische These — wenn du sie in 3 Sätzen jemandem erzählst?',cta:{title:'Erzähl es jemandem. Heute noch.',text:'Nicht als Pitch. <strong>Informell. 3 Sätze. Beim Kaffee.</strong><br><br>Dann beobachte: Wann verlierst du die Person? Was weckt Interesse — und was nicht?<br><br><em>Das ist wertvoller als jede Folie.</em>',duration:'2 × 15 min · Narrativ-Test',durationMin:30},sub:'Nicht pitchen — sondieren. Informell. Was löst Interesse aus? Wo verlierst du die Person?',f:'narrativ-test',t:'ta',ph:'z.B. Reaktion CFO: «Das ist genau was wir brauchen — aber wer bezahlt das?» → Ressourcenfrage ist der nächste Schritt · Reaktion Peer: «Was ist der Unterschied zu heute?» → Unterschied muss schärfer werden...',links:[{i:'🕵️',tt:'Hidden Agenda Tool',s:'Was Stakeholder wirklich antreibt — vor dem Pitch',h:'https://kathrinheinrich.github.io/cmkb-hidden-agenda/hidden_agenda.html'},{i:'🌐',tt:'Stakeholder Netzwerk App',s:'Wer muss von der These überzeugt werden?',h:'https://kathrinheinrich.github.io/cmkb-stakeholder-netzwerk'}]},
+  ]},
+};
+
+// ── RENDER WIZARD ─────────────────────────────────────────────────
+
+// copyCTA replaced by triggerCopy
+
+function calCTA(title, description, durationMin) {
+  const now = new Date();
+  // Suggest next Monday 9am
+  const day = now.getDay();
+  const daysToMonday = day === 0 ? 1 : (8 - day) % 7 || 7;
+  const start = new Date(now);
+  start.setDate(now.getDate() + daysToMonday);
+  start.setHours(9, 0, 0, 0);
+  const end = new Date(start.getTime() + durationMin * 60000);
+
+  const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//CMKB//Strategische Rollenentwicklung//DE',
+    'BEGIN:VEVENT',
+    'UID:cmkb-' + Date.now() + '@rollenentwicklung',
+    'DTSTART:' + fmt(start),
+    'DTEND:' + fmt(end),
+    'SUMMARY:' + title,
+    'DESCRIPTION:' + description.replace(/\n/g, '\n'),
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], {type: 'text/calendar'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cmkb-auftrag.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// CTA data store — avoids inline quoting hell
+const CTA_STORE = {};
+
+function renderCTA(step) {
+  if(!step.cta) return '';
+  const c = step.cta;
+  const id = 'cta-' + Math.random().toString(36).substr(2,8);
+  const copyText = c.title + '\n\n' + c.text.replace(/<[^>]+>/g,'') + '\n\nZeit: ' + c.duration;
+  CTA_STORE[id] = { title: c.title, copyText, durationMin: c.durationMin };
+  return `<div class="wiz-cta">
+    <div class="wiz-cta-label">⚡ Jetzt — bevor du weiterklickst</div>
+    <div class="wiz-cta-title">${c.title}</div>
+    <div class="wiz-cta-text">${c.text}</div>
+    <div class="wiz-cta-btns">
+      <button class="wiz-cta-btn" data-cta-cal="${id}" onclick="triggerCal(this)">📅 In den Kalender</button>
+      <button class="wiz-cta-btn" data-cta-copy="${id}" onclick="triggerCopy(this)">📋 Kopieren</button>
+    </div>
+  </div>`;
+}
+
+function triggerCal(btn) {
+  const d = CTA_STORE[btn.dataset.ctaCal];
+  if(d) calCTA(d.title, d.copyText, d.durationMin);
+}
+
+function triggerCopy(btn) {
+  const d = CTA_STORE[btn.dataset.ctaCopy];
+  if(!d) return;
+  navigator.clipboard.writeText(d.copyText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Kopiert';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderWiz(mod, si) {
+  const wiz = W[mod];
+  if(!wiz) return;
+  const steps = wiz.steps;
+  if(si < 0) si = 0;
+  if(si >= steps.length) { saveAll(); go('dash'); return; }
+  WS[mod] = si;
+  const s = steps[si];
+
+  const dots = steps.map((_,i) => `<div class="wiz-dot ${i<si?'done':i===si?'active':''}" onclick="saveAllInputs();goS('${mod}',${i})"></div>`).join('');
+
+  let body = '';
+
+  if(s.evid) body += `<div class="wiz-evid">📚 ${s.evid} <span class="src">— ${s.esrc}</span></div>`;
+  if(s.info) body += `<div class="wiz-evid" style="background:var(--purp);color:var(--purpf);">📐 ${s.info}</div>`;
+  if(s.links) s.links.forEach(l => {
+    body += `<a class="wiz-link" href="${l.h}" target="_blank"><span class="wiz-link-icon">${l.i}</span><span><span class="wiz-link-title">${l.tt}</span><span class="wiz-link-sub">${l.s}</span></span><span class="wiz-link-arrow">→</span></a>`;
+  });
+  if(s.res) {
+    const lis = s.res.links.map(l=>`<li><a href="${l.h}" target="_blank">${l.t}</a>${l.d?' — '+l.d:''}</li>`).join('');
+    body += `<div class="wiz-res"><div class="wiz-res-label">${s.res.l}</div><ul>${lis}</ul></div>`;
+  }
+
+  body += renderCTA(s);
+
+  if(s.t==='erk') {
+    const items = D.erkundungen?.[s.erkType] || [];
+    body += `<div class="erk-counter-bar">
+      <div class="erk-count" id="erk-num-${s.erkType}">${items.length}</div>
+      <div class="erk-count-info"><strong>Erkundungen dokumentiert</strong>Ziel: ${s.erkZiel}</div>
+      <button class="erk-add-btn" onclick="openErkModal('${s.erkType}')">+ Erkundung hinzufügen</button>
+    </div>
+    <div style="background:var(--teal-l);border-radius:14px;padding:20px 24px;margin-bottom:24px;border-left:4px solid var(--teal-m);">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:10px;font-family:'DM Mono',monospace;">🗣️ Kernfrage</div>
+      <div style="font-size:17px;font-style:italic;color:var(--teal);line-height:1.75;">${s.kernfrage}</div>
+    </div>`;
+    if(s.links && s.links.length) {
+      s.links.forEach(l => {
+        body += `<a class="wiz-link" href="${l.h}" target="_blank"><span class="wiz-link-icon">${l.i}</span><span><span class="wiz-link-title">${l.tt}</span><span class="wiz-link-sub">${l.s}</span></span><span class="wiz-link-arrow">→</span></a>`;
+      });
+    }
+    body += `<div class="erk-log" id="erk-log-${s.erkType}"></div>`;
+    if(s.f) {
+      body += `<div style="margin-top:24px;font-size:16px;font-weight:600;color:var(--grey-d);margin-bottom:14px;">Synthese — was zeigt sich über alle Gespräche hinweg?</div>
+      <textarea class="wiz-textarea" id="wi-${s.f}" placeholder="${s.ph||''}">${D[s.f]||''}</textarea>`;
+    }
+    setTimeout(()=>renderErkLogs(), 50);
+  } else if(s.t==='ta') {
+    body += `<textarea class="wiz-textarea" id="wi-${s.f}" placeholder="${s.ph||''}">${D[s.f]||''}</textarea>`;
+  } else if(s.t==='compare') {
+    body += `<div class="wiz-compare">
+      <div class="wiz-cc is"><div class="wiz-cc-label">${s.ll}</div><textarea class="wiz-textarea" style="min-height:280px;font-size:17px;" id="wi-${s.fl}" placeholder="${s.phl}">${D[s.fl]||''}</textarea></div>
+      <div class="wiz-cc could"><div class="wiz-cc-label">${s.lr}</div><textarea class="wiz-textarea" style="min-height:280px;font-size:17px;" id="wi-${s.fr}" placeholder="${s.phr}">${D[s.fr]||''}</textarea></div>
+    </div>`;
+  } else if(s.t==='nums') {
+    const nf = s.nums.map(n=>`<div class="wiz-nf"><div class="wiz-nf-label">${n.l}</div><div class="wiz-nf-sub">${n.s}</div><input type="text" id="wi-${n.id}" placeholder="${n.ph}" value="${D[n.id]||''}"><div class="wiz-nf-unit">${n.u}</div></div>`).join('');
+    body += `<div class="wiz-num-grid">${nf}</div>`;
+  }
+
+  if(s.t==='erk') {
+    body = renderCTA(s) + `
+    <div class="erk-mindset">
+      <div class="eml">🧭 Die Erkundungshaltung</div>
+      <div class="emt">Raus aus dem Büro. Raus aus den gewohnten Gesprächspartnern.<br><br><em>«Was entdecke ich hier — das sich übertragen lässt?»</em><br><br>Ziel: <strong>8–12 Erkundungen</strong> verteilt über den Prozess. Dokumentiere jede hier.</div>
+    </div>
+
+    <!-- TYP 1 -->
+    <div class="erk-type">
+      <div class="erk-type-hdr" style="background:var(--teal);">
+        <span style="font-size:20px;">🏢</span>
+        <div><div class="erk-type-title">Typ 1 — Systeminnere Gespräche</div><div class="erk-type-sub">Verschiedene Ebenen · verschiedene Funktionen · auch die Kritiker</div></div>
+        <div class="erk-type-count" id="erk-cnt-t1">0 / 3–5</div>
+      </div>
+      <div class="erk-type-body">
+        <div class="erk-type-desc">Kernfrage: <em>«Was könnte dieser Bereich leisten, das er heute nicht leistet — und was hindert ihn daran?»</em><br>Keine Rechtfertigung. Nur Zuhören.</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <a class="wiz-link" href="https://kathrinheinrich.github.io/gespraeche_kompass/gespraeche_kompass.html" target="_blank" style="flex:1;min-width:200px;padding:14px 18px;margin-bottom:0;"><span class="wiz-link-icon">🧭</span><span><span class="wiz-link-title">Gesprächs-Kompass</span><span class="wiz-link-sub">Gespräche vorbereiten</span></span><span class="wiz-link-arrow">→</span></a>
+          <a class="wiz-link" href="https://kathrinheinrich.github.io/cmkb-zuhoer-app/zuhoer_app.html" target="_blank" style="flex:1;min-width:200px;padding:14px 18px;margin-bottom:0;"><span class="wiz-link-icon">👂</span><span><span class="wiz-link-title">Zuhör-App</span><span class="wiz-link-sub">Erkenntnisse erfassen</span></span><span class="wiz-link-arrow">→</span></a>
+        </div>
+        <button class="erk-acc-trigger" onclick="toggleErkAcc(this)">📋 Interview-Leitfaden Typ 1 <span class="erk-arr">▼</span></button>
+        <div class="erk-acc-body">
+          <div class="iq"><div class="iq-phase">Einstieg</div><div class="iq-q">«Was leistet dieser Bereich aus Ihrer Sicht am stärksten — was würden Sie vermissen?»</div><div class="iq-hint">Was als erstes kommt ist oft das Ehrlichste. Nicht korrigieren.</div></div>
+          <div class="iq"><div class="iq-phase">Kernfrage</div><div class="iq-q">«Was könnte — und sollte — dieser Bereich leisten, das er heute noch nicht leistet?»</div><div class="iq-hint">Pause aushalten. Erste Antwort ist selten die tiefste.</div></div>
+          <div class="iq"><div class="iq-phase">Systembedarf</div><div class="iq-q">«Was wird das Unternehmen in 3–5 Jahren strategisch brauchen — das heute noch niemand explizit liefert?»</div><div class="iq-hint">Hier entstehen die wertvollsten strategischen Hinweise.</div></div>
+          <div class="iq"><div class="iq-phase">Abschluss</div><div class="iq-q">«Was würden Sie an diesem Bereich als erstes verändern — wenn Sie könnten?»</div><div class="iq-hint">Ehrlichste Frage. Gibt oft den klarsten Blindspot-Hinweis.</div></div>
+          <div class="coming-soon">🔧 Spezifische Interview-Skripte für systeminnere Gespräche in Entwicklung.</div>
+        </div>
+        <div class="erk-log-wrap" id="erk-log-t1"></div>
+        <button class="erk-add-btn" onclick="openErkModal('t1')">+ Erkundung dokumentieren</button>
+      </div>
+    </div>
+
+    <!-- TYP 2 -->
+    <div class="erk-type">
+      <div class="erk-type-hdr" style="background:var(--purpf);">
+        <span style="font-size:20px;">🌐</span>
+        <div><div class="erk-type-title">Typ 2 — Systemgrenzen</div><div class="erk-type-sub">Kunden · Lieferanten · Partner · Branchenbeobachter · ausgestiegene Insider</div></div>
+        <div class="erk-type-count" id="erk-cnt-t2">0 / 3–5</div>
+      </div>
+      <div class="erk-type-body">
+        <div class="erk-type-desc">Kernfrage: <em>«Was wird in 3–5 Jahren Ihre wichtigste strategische Herausforderung sein — für die Sie heute noch keine Lösung haben?»</em><br>Keine Lösungen anbieten. Nur zuhören.</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <a class="wiz-link" href="https://kathrinheinrich.github.io/gespraeche_kompass/gespraeche_kompass.html" target="_blank" style="flex:1;min-width:180px;padding:14px 18px;margin-bottom:0;"><span class="wiz-link-icon">🧭</span><span><span class="wiz-link-title">Gesprächs-Kompass</span><span class="wiz-link-sub">Externe Gespräche vorbereiten</span></span><span class="wiz-link-arrow">→</span></a>
+          <a class="wiz-link" href="https://kathrinheinrich.github.io/cmkb-hidden-agenda/hidden_agenda.html" target="_blank" style="flex:1;min-width:180px;padding:14px 18px;margin-bottom:0;"><span class="wiz-link-icon">🕵️</span><span><span class="wiz-link-title">Hidden Agenda Tool</span><span class="wiz-link-sub">Was Stakeholder wirklich antreibt</span></span><span class="wiz-link-arrow">→</span></a>
+          <a class="wiz-link" href="https://kathrinheinrich.github.io/cmkb-stakeholder-netzwerk" target="_blank" style="flex:1;min-width:180px;padding:14px 18px;margin-bottom:0;"><span class="wiz-link-icon">🌐</span><span><span class="wiz-link-title">Stakeholder Netzwerk</span><span class="wiz-link-sub">Akteure visualisieren</span></span><span class="wiz-link-arrow">→</span></a>
+        </div>
+        <button class="erk-acc-trigger" onclick="toggleErkAcc(this)">📋 Interview-Leitfaden Typ 2 <span class="erk-arr">▼</span></button>
+        <div class="erk-acc-body">
+          <div class="iq"><div class="iq-phase">Einstieg</div><div class="iq-q">«Was beobachten Sie in Ihrer Branche, das in den nächsten 3 Jahren wirklich entscheidend wird?»</div><div class="iq-hint">Breit einsteigen — dann eingrenzen.</div></div>
+          <div class="iq"><div class="iq-phase">Kernfrage</div><div class="iq-q">«Was wird in 3–5 Jahren Ihre wichtigste strategische Herausforderung sein — für die Sie heute noch keine Lösung haben?»</div><div class="iq-hint">Keine Lösungen anbieten. Nur zuhören.</div></div>
+          <div class="iq"><div class="iq-phase">Systemsicht</div><div class="iq-q">«Was sehen Sie bei uns von außen — das wir von innen nicht sehen?»</div><div class="iq-hint">Mutige Frage. Stille aushalten. Wertvollste Blindspot-Hinweise.</div></div>
+          <div class="iq"><div class="iq-phase">Zukunft</div><div class="iq-q">«Was würden Sie von einem Partner wie uns in 5 Jahren anders erwarten als heute?»</div><div class="iq-hint">Gibt direkten Input für die strategische Stoßrichtung.</div></div>
+          <div class="coming-soon">🔧 Spezifische Interview-Skripte für Systemgrenzen-Gespräche in Entwicklung.</div>
+        </div>
+        <div class="erk-log-wrap" id="erk-log-t2"></div>
+        <button class="erk-add-btn" onclick="openErkModal('t2')">+ Erkundung dokumentieren</button>
+      </div>
+    </div>
+
+    <!-- TYP 3 -->
+    <div class="erk-type">
+      <div class="erk-type-hdr" style="background:var(--ambf);">
+        <span style="font-size:20px;">🔭</span>
+        <div><div class="erk-type-title">Typ 3 — Analoge Felder</div><div class="erk-type-sub">Orte und Menschen die scheinbar nichts mit diesem Thema zu tun haben</div></div>
+        <div class="erk-type-count" id="erk-cnt-t3">0 / 2–3</div>
+      </div>
+      <div class="erk-type-body">
+        <div class="erk-type-desc">Stadtplanung · Dirigat · Notaufnahme · Spitzensport · Start-up-Pitch · Handwerk · Theater-Regie.<br><br>Die Frage die du überall mitnimmst: <em>«Was sehe ich hier — das sich übertragen lässt?»</em></div>
+        <div style="background:var(--amb);border-radius:12px;padding:18px 20px;margin-bottom:16px;border-left:4px solid var(--ambf);">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ambf);margin-bottom:10px;font-family:'DM Mono',monospace;">Reflexionsfragen danach</div>
+          <div style="font-size:15px;color:#5a3000;line-height:1.8;"><strong>Vor dem Besuch:</strong> Was könnte dieser Ort über mein strategisches Thema wissen — ohne es zu wissen?<br><strong>Während:</strong> Was funktioniert hier anders — und warum?<br><strong>Danach:</strong> Was lässt sich übertragen? Welcher Impuls bleibt?</div>
+        </div>
+        <div class="erk-log-wrap" id="erk-log-t3"></div>
+        <button class="erk-add-btn" onclick="openErkModal('t3')">+ Erkundung dokumentieren</button>
+      </div>
+    </div>`;
+    renderErkLogs();
+  }
+  const isLast = si === steps.length - 1;
+  const container = document.getElementById('wiz-'+mod);
+  if(!container) return;
+
+  container.innerHTML = `
+    <div class="wiz-topbar">
+      <div class="wiz-module-label" style="color:${wiz.col}">${wiz.mod}</div>
+      <div class="wiz-dots">${dots}</div>
+      <div class="wiz-step-label">Schritt ${si+1} / ${steps.length}</div>
+    </div>
+    <div class="wiz-body">
+      <div class="wiz-tag">${s.tag}</div>
+      <div class="wiz-question">${s.q}</div>
+      <div class="wiz-sub">${s.sub}</div>
+      ${body}
+    </div>
+    <div class="wiz-nav">
+      <button class="wiz-back" onclick="saveAllInputs();${si>0?`goS('${mod}',${si-1})`:`go('dash')`}">${si>0?'← Zurück':'← Dashboard'}</button>
+      ${!isLast?`<button class="wiz-skip" onclick="saveAllInputs();goS('${mod}',${si+1})">Überspringen</button>`:''}
+      <button class="wiz-next ${isLast?'gold':''}" onclick="saveAllInputs();${isLast?`saveAll();go('dash')`:`goS('${mod}',${si+1})`}">${isLast?'Modul abschließen ✓':'Weiter →'}</button>
+    </div>`;
+}
+
+function saveAllInputs() {
+  document.querySelectorAll('[id^="wi-"]').forEach(el => {
+    D[el.id.replace('wi-','')] = el.value;
+  });
+}
+
+function goS(mod, si) {
+  saveAllInputs();
+  persist();
+  renderWiz(mod, si);
+  scrollTop();
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────
+const TABS = ['dash','ist','blind','erk','stoss','papier','sessions'];
+
+function go(id, step) {
+  saveAllInputs();
+  saveAll();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('screen-'+id)?.classList.add('active');
+  const idx = TABS.indexOf(id);
+  document.querySelectorAll('.sb-item')[idx]?.classList.add('active');
+  document.querySelectorAll('.mob-tab')[idx]?.classList.add('active');
+  if(W[id]) renderWiz(id, step!==undefined ? step : (WS[id]||0));
+  updateProg(idx);
+  updateStatus();
+  scrollTop();
+}
+
+function scrollTop(){
+  const m = document.getElementById('main');
+  if(m) m.scrollTo(0,0);
+  window.scrollTo(0,0);
+  document.documentElement.scrollTop=0;
+}
+
+function updateProg(idx){
+  const p = Math.round((idx/(TABS.length-1))*100);
+  ['sb-fill','mob-bar'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.width=p+'%';});
+}
+
+// ── DATA ──────────────────────────────────────────────────────────
+function load(){try{const r=localStorage.getItem(KEY);if(r)D=JSON.parse(r);}catch(e){}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(D));}catch(e){}}
+function saveAll(){
+  saveAllInputs();
+  ['ctx-funktion','ctx-ziel'].forEach(id=>{const el=document.getElementById(id);if(el)D[id]=el.value;});
+  persist();
+  updateStatus();
+  document.querySelectorAll('.sb-btn,.fab').forEach(b=>{if(b.textContent.includes('Speichern')){const o=b.innerHTML;b.innerHTML='✓';setTimeout(()=>b.innerHTML=o,1200);}});
+}
+
+function updateCtx(){
+  const v=document.getElementById('ctx-funktion')?.value?.split('\n')[0];
+  const el=document.getElementById('dash-ctx-val');
+  if(el)el.textContent=v||'Noch kein Kontext gesetzt';
+}
+function toggleSetup(){document.getElementById('setup-panel').classList.toggle('vis');}
+function selChip(el){el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+
+function updateStatus(){
+  const chk={ist:['ist-ergebnisse','ist-potenzial'],blind:['bs-tagesgeschaeft','bs-leiter'],erk:['mk-megatrends','mk-kunden'],stoss:['str-these','i1-was']};
+  Object.entries(chk).forEach(([m,f])=>{
+    const n=f.filter(id=>D[id]&&D[id].trim().length>10).length;
+    const el=document.getElementById('st-'+m);
+    const ti=document.getElementById('tile-'+m);
+    if(!el)return;
+    if(n===0){el.textContent='○ offen';el.className='mt-status empty';ti?.classList.remove('has-data');}
+    else if(n<f.length){el.textContent='◑ begonnen';el.className='mt-status started';ti?.classList.add('has-data');}
+    else{el.textContent='● bereit';el.className='mt-status done';ti?.classList.add('has-data');}
+  });
+  const ps=document.getElementById('st-papier');
+  if(ps){const h=D.versions?.length>0;ps.textContent=h?`● ${D.versions.length} Version(en)`:'○ noch nicht generiert';ps.className=h?'mt-status done':'mt-status empty';}
+  updateCtx();
+}
+
+// ── STRATEGIEPAPIER ───────────────────────────────────────────────
+function g(id){return D[id]||'';}
+function bl(lbl,parts,col){const c=parts.filter(Boolean).join('<br><br>');return c?`<div class="strat-block" style="border-color:${col}"><div class="sol">${lbl}</div><div class="soc">${c}</div></div>`:'';}
+function genPapier(){
+  saveAll();
+  const zahlen=[g('z-umsatz')&&`<strong>Beeinflusster Umsatz:</strong> ${g('z-umsatz')} €/Jahr`,g('z-entscheidungsvolumen')&&`<strong>Entscheidungsvolumen:</strong> ${g('z-entscheidungsvolumen')} €`,g('z-kosten-gesamt')&&`<strong>Ressourceneinsatz:</strong> ${g('z-kosten-gesamt')} €/Jahr`,g('z-teamgroesse')&&`<strong>Teamgröße:</strong> ${g('z-teamgroesse')} FTE`,g('z-reaktiv')&&`<strong>Kapazitätsverteilung:</strong> ${g('z-reaktiv')}% reaktiv / ${g('z-strategisch')||'—'}% strategisch`].filter(Boolean);
+  const html=`
+  <div style="font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal);margin-bottom:8px;">Strategiepapier</div>
+  <div style="font-size:16px;color:var(--grey-d);font-style:italic;margin-bottom:6px;">${g('ctx-funktion').split('\n')[0]||'Funktion & Verantwortungsbereich'}</div>
+  <div style="font-size:13px;color:var(--grey-d);font-family:'DM Mono',monospace;margin-bottom:30px;">CMKB · ${new Date().toLocaleDateString('de-DE',{year:'numeric',month:'long'})}</div>
+  <div style="height:2px;background:var(--grey-l);margin-bottom:30px;"></div>
+  ${zahlen.length?`<div class="strat-block" style="border-color:var(--teal-m)"><div class="sol">📊 Kennzahlen dieser Funktion</div><div class="soc">${zahlen.join('<br>')}</div></div>`:''}
+  ${bl('📊 Ist-Stand',[g('ist-ergebnisse')&&`<strong>Ergebnisse:</strong> ${g('ist-ergebnisse')}`,g('ist-geliefert')&&`<strong>Tatsächlicher Wertbeitrag:</strong> ${g('ist-geliefert')}`,g('ist-blocker')&&`<strong>Blocker:</strong> ${g('ist-blocker')}`],'var(--teal-m)')}
+  ${bl('🔭 Strategische Blindspots',[g('bs-tagesgeschaeft')&&`<strong>Was diese Funktion nicht sieht:</strong> ${g('bs-tagesgeschaeft')}`,g('bs-leiter')&&`<strong>Überzeugung die zum Limit wurde:</strong> ${g('bs-leiter')}`],'var(--purpf)')}
+  ${bl('🌍 Strategischer Kontext',[g('mk-megatrends')&&`<strong>Megatrends:</strong> ${g('mk-megatrends')}`,g('mk-fazit')&&`<strong>Konsequenz:</strong> ${g('mk-fazit')}`],'var(--ambf)')}
+  <div style="height:2px;background:var(--grey-l);margin:30px 0;"></div>
+  ${g('str-these')?`<div class="commit-box"><div class="commit-label">Strategische These</div><div class="commit-text">${g('str-these')}</div></div>`:''}
+  ${bl('🚀 Initiative 01',[g('i1-was')&&`<strong>Was:</strong> ${g('i1-was')}`,g('i1-wertbeitrag-zahl')&&`<strong>Wertbeitrag:</strong> ${g('i1-wertbeitrag-zahl')} €/Jahr`,g('i1-invest')&&`<strong>Invest:</strong> ${g('i1-invest')} €`,g('i1-breakeven')&&`<strong>Break-even:</strong> ${g('i1-breakeven')} Monate`],'var(--grnf)')}
+  ${g('i2-was')?bl('🚀 Initiative 02',[`<strong>Was:</strong> ${g('i2-was')}`,g('i2-wertbeitrag-zahl')&&`<strong>Wertbeitrag:</strong> ${g('i2-wertbeitrag-zahl')} €/Jahr`],'var(--grnf)'):''}
+  <div style="text-align:center;padding:28px 0 4px;margin-top:20px;border-top:2px solid var(--grey-l);"><div style="font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;">Change Maker Karriere Beratung · CMKB · Kathrin Heinrich</div></div>`;
+  document.getElementById('papier-preview').innerHTML=html;
+}
+
+function saveVersion(){
+  const note=prompt('Versionsnotiz (optional, z.B. «Nach Session 2»):','');
+  if(note===null)return;
+  genPapier();
+  const html=document.getElementById('papier-preview')?.innerHTML;
+  if(!html?.trim()){alert('Bitte zuerst das Strategiepapier generieren.');return;}
+  if(!D.versions)D.versions=[];
+  D.versions.push({id:Date.now(),num:D.versions.length+1,date:new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),note:note||'',html});
+  persist();renderVersions();
+}
+function renderVersions(){
+  const c=document.getElementById('version-list');if(!c)return;
+  if(!D.versions?.length){c.innerHTML='<div style="font-size:16px;color:var(--grey-d);font-style:italic;">Noch keine Versionen gespeichert.</div>';return;}
+  c.innerHTML=`<div class="vi-list">${D.versions.slice().reverse().map(v=>`<div class="vi-item"><div class="vi-info"><div class="vi-num">Version ${v.num}</div><div class="vi-date">${v.date}</div>${v.note?`<div class="vi-note">${v.note}</div>`:''}</div><div class="vi-btns"><button class="v-btn" onclick="document.getElementById('papier-preview').innerHTML=D.versions.find(x=>x.id==${v.id}).html">Anzeigen</button><button class="v-btn del" onclick="if(confirm('Löschen?')){D.versions=D.versions.filter(x=>x.id!=${v.id});persist();renderVersions();}">✕</button></div></div>`).join('')}</div>`;
+}
+
+// ── SESSIONS ──────────────────────────────────────────────────────
+function renderSessions(){
+  const c=document.getElementById('sessions-wrap');if(!c)return;
+  const s=(num,col,lbl,ti,tim,prep,steps,fg,auf)=>{
+    const ph=prep.map(p=>`<div style="background:var(--sand);border-radius:12px;padding:16px 20px;font-size:17px;color:var(--text);line-height:1.7;display:flex;gap:12px;"><span style="color:var(--teal-m);font-weight:700;font-size:20px;">·</span>${p}</div>`).join('');
+    const sh=steps.map(x=>`<div style="display:flex;gap:14px;margin-bottom:12px;"><div style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;">${x[0]}</div><div style="font-size:16px;color:rgba(255,255,255,.85);line-height:1.7;padding-top:3px;"><strong style="color:white;">${x[1]}:</strong> ${x[2]}</div></div>`).join('');
+    const fh=fg?`<div style="background:var(--evid);border-radius:14px;padding:22px 26px;margin-bottom:20px;border-left:4px solid var(--evidf);"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--evidf);margin-bottom:12px;font-family:'DM Mono',monospace;">🗣️ Feldgespräch-Auftrag</div><div style="font-size:17px;font-weight:600;color:var(--teal);font-style:italic;margin-bottom:10px;line-height:1.7;">${fg}</div></div>`:'';
+    const ah=auf.map(a=>`<div style="background:var(--sand);border-radius:12px;padding:16px 20px;font-size:17px;color:var(--text);line-height:1.7;display:flex;gap:12px;"><span style="color:var(--gold);font-weight:700;font-size:20px;">→</span>${a}</div>`).join('');
+    return `<div style="background:var(--white);border-radius:22px;margin-bottom:36px;overflow:hidden;box-shadow:0 2px 20px rgba(11,57,72,.08);">
+      <div style="padding:24px 32px;display:flex;align-items:center;gap:18px;background:linear-gradient(90deg,${col},${col}cc);">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:26px;color:white;flex-shrink:0;">${num}</div>
+        <div><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:4px;font-family:'DM Mono',monospace;">${lbl}</div><div style="font-family:'DM Serif Display',serif;font-size:22px;color:white;margin-bottom:3px;">${ti}</div><div style="font-size:14px;color:rgba(255,255,255,.5);">${tim}</div></div>
+      </div>
+      <div style="padding:32px 36px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:16px;font-family:'DM Mono',monospace;">📄 Vorbereitung</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">${ph}</div>
+        <div style="background:var(--teal);border-radius:16px;padding:26px 30px;margin-bottom:32px;">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:14px;font-family:'DM Mono',monospace;">🎯 Gesprächsrahmen · 60 min · mit Kathrin</div>
+          ${sh}
+        </div>
+        ${fh}
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:16px;font-family:'DM Mono',monospace;">⚡ Auftrag bis zur nächsten Session</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">${ah}</div>
+      </div>
+    </div>`;
+  };
+  c.innerHTML=`
+  <div style="background:linear-gradient(135deg,var(--teal),#0d4a5e);border-radius:22px;padding:48px 52px;margin-bottom:44px;">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:12px;font-family:'DM Mono',monospace;">Q2 · 3 Monate · 4 Sessions</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:34px;color:white;margin-bottom:12px;">Sparring-Fahrplan</div>
+    <div style="font-size:18px;color:var(--teal-l);line-height:1.75;">Vier strukturierte Sessions à 60 min. Klare Vorbereitung, klarer Gesprächsrahmen, klarer Auftrag.</div>
+  </div>
+  ${s(1,'#0B3948','Session 1 · Kickoff','Ist-Analyse & strategische Blindspots','Monat 1 · Woche 1–2',
+    ['Modul 01 (Ist-Analyse) vollständig durchgearbeitet','Modul 02 (Blindspots) — Annahmen-Analyse durchgeführt','Situation mitbringen: Wann hat dieser Bereich zuletzt wirklich Wirkung erzeugt?'],
+    [['1','Ist-Stand (15 min)','Was liefert dieser Bereich wirklich — was sagt das Output-Audit?'],['2','Potenzial-Gap (15 min)','Wo liegt das ungenutzte Potenzial? Was hindert strukturell?'],['3','Blindspot-Analyse (20 min)','Was sieht diese Funktion nicht?'],['4','Auftragsklärung (10 min)','3–5 Feldgespräche definieren']],
+    '«Was könnte dieser Bereich leisten, das er heute nicht leistet — und was hindert ihn daran?»',
+    ['Modul 03 (Erkundung): Megatrend-Recherche starten','Erste 3–5 Feldgespräche führen und dokumentieren']
+  )}
+  ${s(2,'#512da8','Session 2 · Erkundung','Marktanalyse · Kunden · Systemlücken','Monat 1–2 · Woche 4–5',
+    ['Feldgespräch-Runde 1 abgeschlossen — Erkenntnisse dokumentiert','Top-3-Megatrends für diese Branche formuliert','Erste Hypothese: Welche Systemlücke könnte dieser Bereich schließen?'],
+    [['1','Feldgespräch-Review (15 min)','Was haben die Gespräche gezeigt? Welches Muster?'],['2','Megatrend-Implikationen (15 min)','Was verändert sich — was bedeutet das konkret?'],['3','Systemlücken-Analyse (20 min)','Was braucht das Unternehmen, das noch niemand liefert?'],['4','Erste Stoßrichtung (10 min)','Erste Hypothese zu 2–3 Initiativen']],
+    '«Was wird in 3–5 Jahren Ihre wichtigste strategische Herausforderung sein — für die Sie heute noch keine Lösung haben?»',
+    ['Modul 04: Strategische These und erste Initiativen formulieren','Weitere 3–5 Feldgespräche an Systemgrenzen']
+  )}
+  ${s(3,'#c45400','Session 3 · Stoßrichtung','Initiativen schärfen · Narrativ testen','Monat 2–3 · Woche 7–8',
+    ['Modul 04 vollständig: These + Initiativen mit Zahlen','Strategiepapier Erstentwurf generiert','Ersten Narrativ-Test gemacht — mit wem, welche Reaktion?'],
+    [['1','Initiativen-Review (20 min)','Ist der Wertbeitrag wirklich messbar? Was ist der stärkste Einwand?'],['2','Zahlen-Check (15 min)','Sind die Zahlen belastbar?'],['3','Strategiepapier-Review (15 min)','Was stimmt? Was fehlt? Was klingt noch nicht boardroom-ready?'],['4','Narrativ schärfen (10 min)','Für welche Stakeholder welches Framing?']],
+    '«Ich arbeite an einer strategischen Neuausrichtung — darf ich dir in 3 Sätzen sagen worum es geht?»',
+    ['Strategiepapier überarbeiten — alle Schärfungen einarbeiten','Vor wem setze ich das Papier in den nächsten 60 Tagen ein?']
+  )}
+  ${s(4,'#1e5c1e','Session 4 · Abschluss','Strategiepapier final · Einsatz vorbereiten','Monat 3 · Woche 10–12',
+    ['Strategiepapier in finaler Version generiert und als Version gespeichert','Klare Antwort: Vor wem, wann, in welchem Format wird das Papier eingesetzt?'],
+    [['1','Narrativ-Review (10 min)','Was haben die Test-Gespräche verändert?'],['2','Strategiepapier final (20 min)','Ist jede Aussage belastbar?'],['3','Einsatzplanung (20 min)','Wer · wann · wie — konkrete nächste Schritte für 60 Tage'],['4','Ausblick (10 min)','Was kommt nach Q2?']],
+    null,
+    ['Das Strategiepapier ist fertig und einsatzbereit.']
+  )}`;
+}
+
+
+// ── ERKUNDUNGS-SYSTEM ─────────────────────────────────────────
+let erkModalType = '';
+function openErkModal(type) {
+  erkModalType = type;
+  document.getElementById('erk-modal-who').value = '';
+  document.getElementById('erk-modal-insight').value = '';
+  document.getElementById('erk-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeErkModal() {
+  document.getElementById('erk-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function saveErkEntry() {
+  const who = document.getElementById('erk-modal-who').value.trim();
+  const insight = document.getElementById('erk-modal-insight').value.trim();
+  if(!D.erk) D.erk = {t1:[],t2:[],t3:[]};
+  D.erk[erkModalType].push({who, insight, date: new Date().toLocaleDateString('de-DE')});
+  persist();
+  renderErkLogs();
+  closeErkModal();
+}
+function renderErkLogs() {
+  ['t1','t2','t3'].forEach(t => {
+    const el = document.getElementById('erk-log-' + t);
+    if(!el) return;
+    const items = D.erk?.[t] || [];
+    const cnt = document.getElementById('erk-cnt-' + t);
+    if(cnt) cnt.textContent = items.length + (t==='t1'?' / 3–5':t==='t2'?' / 3–5':' / 2–3');
+    el.innerHTML = items.map((x,i) => `<div class="erk-log-item"><div class="eli-hdr"><span class="eli-num">#${i+1}</span><span class="eli-who">${x.who||'Erkundung'}</span><span class="eli-date">${x.date||''}</span></div>${x.insight?`<div class="eli-insight">${x.insight}</div>`:''}</div>`).join('');
+  });
+}
+function toggleErkAcc(el) {
+  el.classList.toggle('open-trigger');
+  const body = el.nextElementSibling;
+  body.classList.toggle('open');
+  el.querySelector('.erk-arr').textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+
+function openErkModal(type) {
+  document.getElementById('erk-modal').dataset.type = type;
+  document.getElementById('em-who').value = '';
+  document.getElementById('em-insight').value = '';
+  document.getElementById('erk-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeErkModal() {
+  document.getElementById('erk-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function saveErkEntry() {
+  const type = document.getElementById('erk-modal').dataset.type;
+  const who = document.getElementById('em-who').value.trim();
+  const insight = document.getElementById('em-insight').value.trim();
+  if(!who && !insight) { closeErkModal(); return; }
+  if(!D.erkundungen) D.erkundungen = {t1:[],t2:[],t3:[]};
+  if(!D.erkundungen[type]) D.erkundungen[type] = [];
+  D.erkundungen[type].push({who, insight, date: new Date().toLocaleDateString('de-DE')});
+  persist();
+  renderErkLogs();
+  closeErkModal();
+}
+function renderErkLogs() {
+  ['t1','t2','t3'].forEach(type => {
+    const el = document.getElementById('erk-log-' + type);
+    const countEl = document.getElementById('erk-num-' + type);
+    const items = D.erkundungen?.[type] || [];
+    if(countEl) countEl.textContent = items.length;
+    if(!el) return;
+    if(!items.length) {
+      el.innerHTML = '<div class="erk-empty">Noch keine Erkundungen dokumentiert — Button oben nutzen.</div>';
+      return;
+    }
+    el.innerHTML = items.map((item,i) => `
+      <div class="erk-entry">
+        <div class="erk-entry-who">${item.who || 'Erkundung ' + (i+1)}</div>
+        ${item.insight ? `<div class="erk-entry-insight">${item.insight}</div>` : ''}
+        <div class="erk-entry-date">${item.date||''}</div>
+      </div>`).join('');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+load();
+['ctx-funktion','ctx-ziel'].forEach(id=>{const el=document.getElementById(id);if(el&&D[id])el.value=D[id];});
+updateStatus();renderVersions();renderSessions();renderErkLogs();updateProg(0);
+</script>
+
+<div class="erk-modal" id="erk-modal" onclick="if(event.target===this)closeErkModal()">
+  <div class="erk-modal-box">
+    <div class="erk-modal-title">Erkundung dokumentieren</div>
+    <div class="erk-modal-f"><label>Wen oder was hast du erkundet?</label><input type="text" id="erk-modal-who" placeholder="z.B. CFO Müller · Kunde XY · Stadtplaner · Start-up-Pitch"></div>
+    <div class="erk-modal-f"><label>Was ist hängen geblieben?</label><textarea id="erk-modal-insight" placeholder="z.B. Überraschend: Der CFO sieht diese Funktion als deutlich strategisch relevanter als sie sich selbst einschätzt..."></textarea></div>
+    <div class="erk-modal-btns">
+      <button class="btn-p" style="flex:2;" onclick="saveErkEntry()">Speichern</button>
+      <button class="btn-p" style="flex:1;background:var(--grey-d);" onclick="closeErkModal()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="erk-modal" id="erk-modal" onclick="if(event.target===this)closeErkModal()">
+  <div class="erk-modal-box">
+    <div class="erk-modal-title">Erkundung dokumentieren</div>
+    <div class="erk-modal-field">
+      <label>Wen oder was hast du erkundet?</label>
+      <input type="text" id="em-who" placeholder="z.B. CFO Schmidt · Kunde XY · Start-up-Pitch · Besuch Stadtplanung">
+    </div>
+    <div class="erk-modal-field">
+      <label>Was ist hängen geblieben — welcher Impuls, welche Erkenntnis?</label>
+      <textarea id="em-insight" style="min-height:120px;" placeholder="z.B. Überraschend: Das Signal war konsistent über alle Gespräche hinweg — niemand intern spricht darüber..."></textarea>
+    </div>
+    <div class="erk-modal-btns">
+      <button class="wiz-next" style="flex:2;padding:14px 24px;" onclick="saveErkEntry()">Erkundung speichern</button>
+      <button class="wiz-back" style="flex:1;" onclick="closeErkModal()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
