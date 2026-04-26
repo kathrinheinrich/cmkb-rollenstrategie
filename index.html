@@ -373,16 +373,12 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
 }
 
 @media print {
-  .sidebar, .mob-hdr, .fab-row, .quick-row, .sb-brand, aside, nav { display: none !important; }
-  #screen-dash { display: none !important; }
+  .sidebar, .mob-hdr, .fab-row, .quick-row, aside, nav, button { display: none !important; }
   .main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; }
   body { background: white !important; }
-  .screen { display: none !important; }
-  #screen-papier { display: block !important; }
-  #screen-papier .mt-card { display: none !important; }
-  .ph-actions, .pv-actions, button { display: none !important; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <div class="shell">
@@ -431,13 +427,13 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
     <div class="dash-title">Was könnte — und sollte —<br>dieser Bereich liefern?</div>
     <div class="dash-sub">Dieser Prozess unterstützt dich dabei, den strategischen Wertbeitrag sichtbar zu machen — und ein boardroom-fähiges Strategiepapier zu entwickeln.</div>
     <div class="dash-ctx">
-      <div class="dash-ctx-val" id="dash-ctx-val">Noch kein Kontext gesetzt</div>
+      <div class="dash-ctx-val" id="dash-ctx-val">Bitte unten Kontext eintragen</div>
       <div class="dash-ctx-edit" onclick="toggleSetup()">✎ Kontext setzen</div>
     </div>
   </div>
 
-  <div id="setup-panel" class="setup-panel">
-    <div class="setup-title">Kontext setzen</div>
+  <div id="setup-panel" class="setup-panel vis">
+    <div class="setup-title">📋 Bevor du startest — bitte Kontext setzen</div>
     <div class="fw">
       <div class="fl">Funktion & Verantwortungsbereich</div>
       <div class="fs">Titel · Bereich · Unternehmen · Teamgröße · Berichtslinie</div>
@@ -456,7 +452,7 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
       <div class="fs">Welches Gespräch · welche Entscheidung · welches Ziel</div>
       <textarea id="ctx-ziel" oninput="D['ctx-ziel']=this.value" placeholder="z.B. Gespräch mit CEO · Grundlage für Budgetantrag..."></textarea>
     </div>
-    <button class="btn-p gold" onclick="saveAll();toggleSetup()">Kontext speichern & schließen</button>
+    <button class="btn-p" style="background:var(--redf);color:white;font-size:17px;font-weight:700;padding:18px 32px;box-shadow:0 4px 16px rgba(192,84,74,.3);" onclick="saveAll();toggleSetup()">✓ Kontext speichern & schließen</button>
   </div>
 
   <div class="quick-row">
@@ -606,7 +602,7 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
     <div style="font-size:16px;color:var(--redf);line-height:1.75;"><strong>Daten liegen ausschliesslich lokal in diesem Browser.</strong> Cache leeren = alles weg.<br><br><strong>👉 Speichere den Link jetzt als Lesezeichen — immer denselben Browser, dasselbe Gerät.</strong></div>
     <div style="height:1px;background:rgba(192,84,74,.2);margin:18px 0;"></div>
     <div style="font-size:13px;font-weight:700;color:var(--grnf);margin-bottom:10px;font-family:'DM Mono',monospace;letter-spacing:.05em;">🔒 MAXIMALE VERTRAULICHKEIT BY DESIGN</div>
-    <div style="font-size:16px;color:var(--grnf);line-height:1.75;"><strong>Kein Server. Keine Cloud. Deine Daten verlassen deinen Rechner nie.</strong><br><br><strong>Unternehmensnutzung:</strong> HTML-Datei auf Firmenrechner speichern und dort im Firmenbrowser öffnen.</div>
+    <div style="font-size:16px;color:var(--grnf);line-height:1.75;"><strong>Kein Server. Keine Cloud. Deine Daten verlassen deinen Rechner nie.</strong><br><br><strong>Empfehlung Unternehmensnutzung:</strong> Link im Firmenbrowser öffnen und dort als Lesezeichen speichern. Daten bleiben ausschließlich auf deinem Rechner — sie werden nirgendwohin synchronisiert.</div>
   </div>
 
   <div style="text-align:center;padding:8px 0;"><span style="font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;">📚 Dutton & Ashford (1993) · Ibarra (2015)</span></div>
@@ -626,6 +622,7 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
   <div style="display:flex;gap:14px;margin-bottom:44px;">
     <button class="btn-p" style="flex:2;" onclick="genPapier()">📄 Generieren</button>
     <button class="btn-p" style="flex:1;background:var(--teal-m);" onclick="saveVersion()">💾 Version speichern</button>
+    <button class="btn-p" style="flex:1;background:var(--gold);" onclick="exportPDF()">⬇ PDF-Export</button>
   </div>
   <div id="papier-preview"></div>
   <div style="margin-top:48px;font-family:'DM Serif Display',serif;font-size:24px;color:var(--teal);margin-bottom:22px;">Versionshistorie</div>
@@ -1029,6 +1026,34 @@ function genPapier(){
   ${g('i2-was')?bl('🚀 Initiative 02',[`<strong>Was:</strong> ${g('i2-was')}`,g('i2-wertbeitrag-zahl')&&`<strong>Wertbeitrag:</strong> ${g('i2-wertbeitrag-zahl')} €/Jahr`],'var(--grnf)'):''}
   `;
   document.getElementById('papier-preview').innerHTML=html;
+}
+
+function exportPDF(){
+  const preview = document.getElementById('papier-preview');
+  if(!preview || !preview.innerHTML.trim()){
+    alert('Bitte zuerst Strategiepapier generieren.');
+    return;
+  }
+  if(typeof html2pdf === 'undefined'){
+    alert('PDF-Export benötigt eine Internetverbindung beim ersten Laden. Bitte Seite neu laden bei aktiver Verbindung, dann funktioniert es auch offline.');
+    return;
+  }
+  // Build clean export container — only the papier content, on white
+  const exportNode = document.createElement('div');
+  exportNode.style.cssText = 'background:white;padding:48px 56px;font-family:\'DM Sans\',sans-serif;color:#1a1a1a;';
+  exportNode.innerHTML = preview.innerHTML;
+  // Filename based on current date
+  const d = new Date();
+  const stamp = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const opt = {
+    margin: [12, 12, 14, 12],
+    filename: 'Strategiepapier_' + stamp + '.pdf',
+    image: { type: 'jpeg', quality: 0.96 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
+  };
+  html2pdf().set(opt).from(exportNode).save();
 }
 
 function saveVersion(){
