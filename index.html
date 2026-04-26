@@ -372,6 +372,16 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
   border-color: var(--gold);
 }
 
+@media print {
+  .sidebar, .mob-hdr, .fab-row, .quick-row, .sb-brand, aside, nav { display: none !important; }
+  #screen-dash { display: none !important; }
+  .main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; }
+  body { background: white !important; }
+  .screen { display: none !important; }
+  #screen-papier { display: block !important; }
+  #screen-papier .mt-card { display: none !important; }
+  .ph-actions, .pv-actions, button { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -428,13 +438,6 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
 
   <div id="setup-panel" class="setup-panel">
     <div class="setup-title">Kontext setzen</div>
-    <div style="background:var(--red);border-radius:16px;padding:22px 26px;margin-bottom:32px;border-left:4px solid var(--redf);">
-      <div style="font-size:12px;font-weight:700;color:var(--redf);margin-bottom:8px;font-family:'DM Mono',monospace;">⚠️ DATENSPEICHERUNG — BITTE LESEN</div>
-      <div style="font-size:16px;color:var(--redf);line-height:1.75;"><strong>Daten liegen ausschliesslich lokal in diesem Browser.</strong> Cache leeren = alles weg.<br><br><strong>👉 Speichere den Link jetzt als Lesezeichen — immer denselben Browser, dasselbe Gerät.</strong></div>
-      <div style="height:1px;background:rgba(192,84,74,.2);margin:16px 0;"></div>
-      <div style="font-size:12px;font-weight:700;color:var(--grnf);margin-bottom:8px;font-family:'DM Mono',monospace;">🔒 MAXIMALE VERTRAULICHKEIT BY DESIGN</div>
-      <div style="font-size:16px;color:var(--grnf);line-height:1.75;"><strong>Kein Server. Keine Cloud. Deine Daten verlassen deinen Rechner nie.</strong><br><strong>Unternehmensnutzung:</strong> HTML-Datei auf Firmenrechner speichern und dort im Firmenbrowser öffnen.</div>
-    </div>
     <div class="fw">
       <div class="fl">Funktion & Verantwortungsbereich</div>
       <div class="fs">Titel · Bereich · Unternehmen · Teamgröße · Berichtslinie</div>
@@ -596,6 +599,14 @@ textarea:focus,input[type=text]:focus{border-color:var(--teal-m);}
       <div><div class="mt-question" style="margin-bottom:6px;">Boardroom-ready Output</div><div style="font-size:15px;color:var(--grey-d);">Generieren · Versionen speichern · Als PDF sichern</div></div>
       <div style="font-size:40px;margin-left:auto;">📄</div>
     </div>
+  </div>
+
+  <div style="background:var(--red);border-radius:16px;padding:22px 26px;margin-bottom:24px;border-left:4px solid var(--redf);">
+    <div style="font-size:13px;font-weight:700;color:var(--redf);margin-bottom:10px;font-family:'DM Mono',monospace;letter-spacing:.05em;">⚠️ DATENSPEICHERUNG — BITTE LESEN</div>
+    <div style="font-size:16px;color:var(--redf);line-height:1.75;"><strong>Daten liegen ausschliesslich lokal in diesem Browser.</strong> Cache leeren = alles weg.<br><br><strong>👉 Speichere den Link jetzt als Lesezeichen — immer denselben Browser, dasselbe Gerät.</strong></div>
+    <div style="height:1px;background:rgba(192,84,74,.2);margin:18px 0;"></div>
+    <div style="font-size:13px;font-weight:700;color:var(--grnf);margin-bottom:10px;font-family:'DM Mono',monospace;letter-spacing:.05em;">🔒 MAXIMALE VERTRAULICHKEIT BY DESIGN</div>
+    <div style="font-size:16px;color:var(--grnf);line-height:1.75;"><strong>Kein Server. Keine Cloud. Deine Daten verlassen deinen Rechner nie.</strong><br><br><strong>Unternehmensnutzung:</strong> HTML-Datei auf Firmenrechner speichern und dort im Firmenbrowser öffnen.</div>
   </div>
 
   <div style="text-align:center;padding:8px 0;"><span style="font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;">📚 Dutton & Ashford (1993) · Ibarra (2015)</span></div>
@@ -1006,7 +1017,7 @@ function genPapier(){
   const html=`
   <div style="font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal);margin-bottom:8px;">Strategiepapier</div>
   <div style="font-size:16px;color:var(--grey-d);font-style:italic;margin-bottom:6px;">${g('ctx-funktion').split('\n')[0]||'Funktion & Verantwortungsbereich'}</div>
-  <div style="font-size:13px;color:var(--grey-d);font-family:'DM Mono',monospace;margin-bottom:30px;">CMKB · ${new Date().toLocaleDateString('de-DE',{year:'numeric',month:'long'})}</div>
+  <div style="font-size:13px;color:var(--grey-d);font-family:'DM Mono',monospace;margin-bottom:30px;">${new Date().toLocaleDateString('de-DE',{year:'numeric',month:'long'})}</div>
   <div style="height:2px;background:var(--grey-l);margin-bottom:30px;"></div>
   ${zahlen.length?`<div class="strat-block" style="border-color:var(--teal-m)"><div class="sol">📊 Kennzahlen dieser Funktion</div><div class="soc">${zahlen.join('<br>')}</div></div>`:''}
   ${bl('📊 Ist-Stand',[g('ist-ergebnisse')&&`<strong>Ergebnisse:</strong> ${g('ist-ergebnisse')}`,g('ist-geliefert')&&`<strong>Tatsächlicher Wertbeitrag:</strong> ${g('ist-geliefert')}`,g('ist-blocker')&&`<strong>Blocker:</strong> ${g('ist-blocker')}`],'var(--teal-m)')}
@@ -1016,7 +1027,7 @@ function genPapier(){
   ${g('str-these')?`<div class="commit-box"><div class="commit-label">Strategische These</div><div class="commit-text">${g('str-these')}</div></div>`:''}
   ${bl('🚀 Initiative 01',[g('i1-was')&&`<strong>Was:</strong> ${g('i1-was')}`,g('i1-wertbeitrag-zahl')&&`<strong>Wertbeitrag:</strong> ${g('i1-wertbeitrag-zahl')} €/Jahr`,g('i1-invest')&&`<strong>Invest:</strong> ${g('i1-invest')} €`,g('i1-breakeven')&&`<strong>Break-even:</strong> ${g('i1-breakeven')} Monate`],'var(--grnf)')}
   ${g('i2-was')?bl('🚀 Initiative 02',[`<strong>Was:</strong> ${g('i2-was')}`,g('i2-wertbeitrag-zahl')&&`<strong>Wertbeitrag:</strong> ${g('i2-wertbeitrag-zahl')} €/Jahr`],'var(--grnf)'):''}
-  <div style="text-align:center;padding:28px 0 4px;margin-top:20px;border-top:2px solid var(--grey-l);"><div style="font-size:12px;color:var(--grey-d);font-family:'DM Mono',monospace;">Change Maker Karriere Beratung · CMKB · Kathrin Heinrich</div></div>`;
+  `;
   document.getElementById('papier-preview').innerHTML=html;
 }
 
